@@ -169,18 +169,6 @@ jobs:
             else
               echo "A nova versão calculada ($new_version) é igual à versão atual no package.json. Pulando a atualização."
             fi
-        
-        - name: Commit e push
-          if: steps.version.outputs.should_deploy == 'true'
-          env:
-            GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          run: |
-            git config --global user.name 'github-actions'
-            git config --global user.email 'github-actions@github.com'
-            git add package.json
-            git commit -m "chore(release): version $new_version"
-            git tag v$new_version
-            git push origin main --tags
 
         - name: Commit e push
           if: steps.version.outputs.should_deploy == 'true'
