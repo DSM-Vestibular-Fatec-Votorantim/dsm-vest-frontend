@@ -156,7 +156,19 @@ jobs:
         - name: Atualizar versão no package.json
           if: steps.version.outputs.should_deploy == 'true'
           run: |
-            npm version $new_version --no-git-tag-version
+            # Obtém a versão atual do package.json diretamente
+            CURRENT_PKG_VERSION=$(node -p "require('./package.json').version")
+            
+            echo "Versão no package.json: $CURRENT_PKG_VERSION"
+            echo "Nova versão calculada: $new_version"
+            
+            # Executa o npm version **apenas** se a nova versão for diferente da atual
+            if [ "$CURRENT_PKG_VERSION" != "$new_version" ]; then
+              echo "Atualizando package.json para a versão $new_version"
+              npm version "$new_version" --no-git-tag-version # Aspas garantem que a variável é tratada como uma única string
+            else
+              echo "A nova versão calculada ($new_version) é igual à versão atual no package.json. Pulando a atualização."
+            fi
         
         - name: Commit e push
           if: steps.version.outputs.should_deploy == 'true'
