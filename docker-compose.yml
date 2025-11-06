@@ -1,0 +1,15 @@
+services:
+  dsm-vest-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: dsm-vest-frontend
+    restart: always
+    networks:
+      - dsm-vest-network
+
+networks:
+  dsm-vest-network:
+    driver: bridge
