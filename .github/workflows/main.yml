@@ -181,3 +181,23 @@ jobs:
             git commit -m "chore(release): version $new_version"
             git tag v$new_version
             git push origin main --tags
+
+        - name: Commit e push
+          if: steps.version.outputs.should_deploy == 'true'
+          env:
+            GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          run: |
+            git config --global user.name 'github-actions'
+            git config --global user.email 'github-actions@github.com'
+
+            git add package.json
+    
+            # Verifica se há algo 'staged' (preparado) para commitar
+            if git diff --cached --exit-code; then
+              echo "Nenhuma alteração detectada no package.json. Pulando commit e push."
+            else
+              echo "Alterações detectadas. Commitando e fazendo push."
+              git commit -m "chore(release): version $new_version"
+              git tag v$new_version
+              git push origin main --tags
+            fi
