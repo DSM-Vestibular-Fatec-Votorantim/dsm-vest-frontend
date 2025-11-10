@@ -1,11 +1,25 @@
-export default function Login() {
-    return (
-        /**
-         * Página de login para administradores, imagem de fundo da fatec
-         * formulário com campos: email, senha, link para recuperar senha
-         */
-        <div>
+"use client";
 
-        </div>
-    )
-}
+import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import LoginTemplate from "../../components/templates/LoginTemplate";
+
+const LoginPage: React.FC = () => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const { login } = useAuth();
+
+  const handleLogin = async (
+    email: string,
+    password: string,
+  ) => {
+    try {
+      await login(email, password );
+    } catch (error) {
+      setErrorMessage("Erro ao fazer login. Verifique suas credenciais.");
+    }
+  };
+
+  return <LoginTemplate onLogin={handleLogin} errorMessage={errorMessage} />;
+};
+
+export default LoginPage;
