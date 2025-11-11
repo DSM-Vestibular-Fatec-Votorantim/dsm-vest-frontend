@@ -33,9 +33,15 @@ const RegisterTemplate: React.FC<{
   return (
     <>
       <Header />
-      <section>
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto pt-28 mb-14">
-          <div className="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0">
+      <section
+        className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/fatecBg.png')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-xs"></div>
+        <div className="relative z-10 flex flex-col items-center justify-center px-6 py-8 mx-auto pt-28 mb-14 w-full">
+          <div className="bg-white rounded-lg shadow-2xl md:mt-0 w-[90%] max-w-[450px] xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-lg font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                 Crie sua conta

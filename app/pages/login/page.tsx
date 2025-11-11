@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import LoginTemplate from "../../components/templates/LoginTemplate";
+import LoginTemplate from "../../components/templates/LoginTemplateTemplate";
 
 const LoginPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
