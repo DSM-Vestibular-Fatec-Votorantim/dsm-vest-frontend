@@ -1,17 +1,20 @@
 "use client"; // caso esteja usando App Router
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AdminPageTemplate } from "../../components/templates/AdminTemplate";
 
 export default function AdminPage() {
+  const router = useRouter();
   const [admins, setAdmins] = useState([
     { id: 1, name: "Administrador 1" },
     { id: 2, name: "Administrador 2" },
   ]);
 
   const handleAdd = () => {
-    const newId = admins.length + 1;
-    setAdmins([...admins, { id: newId, name: `Administrador ${newId}` }]);
+    //const newId = admins.length + 1;
+    //setAdmins([...admins, { id: newId, name: `Administrador ${newId}` }]);
+    router.push("admin-register")
   };
 
   const handleDelete = (id: number) => {
@@ -19,7 +22,8 @@ export default function AdminPage() {
   };
 
   const handleChangePassword = (id: number) => {
-    alert(`Trocar senha do Administrador ${id}`);
+    //alert(`Trocar senha do Administrador ${id}`);
+    router.push("change-password")
   };
 
   return (
