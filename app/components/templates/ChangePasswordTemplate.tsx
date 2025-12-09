@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../molecules/HeaderLogin";
+import Navbar from "./Navbar";
 
 interface ChangePasswordTemplateProps {
   senhaAtual: string;
@@ -24,7 +24,7 @@ const ChangePasswordTemplate: React.FC<ChangePasswordTemplateProps> = ({
 }) => {
   return (
         <div>
-            <Header />
+            <Navbar />
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto pt-28 mb-14">
                 <div className="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

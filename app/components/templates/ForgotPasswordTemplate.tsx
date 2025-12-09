@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Header from "../molecules/HeaderLogin";
+import Navbar from "./Navbar";  
 
 interface Props {
   step: number;
@@ -35,7 +35,7 @@ const ForgotPasswordTemplate: React.FC<Props> = ({
 }) => {
     return (
         <>
-            <Header />
+            <Navbar />
             <section
                 className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
                 style={{

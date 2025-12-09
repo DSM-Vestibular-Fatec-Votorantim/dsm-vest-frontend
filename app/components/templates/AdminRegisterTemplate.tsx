@@ -1,8 +1,8 @@
 "use client"
 
 //import { registerValidationSchema } from "@/app/validators/registerValidation";
-import Header from "../molecules/HeaderLogin"
 import { useFormik } from "formik";
+import Navbar from "./Navbar";
 
 
 const AdminRegisterTemplate: React.FC<{
@@ -29,7 +29,7 @@ const AdminRegisterTemplate: React.FC<{
 
     return (
         <div>
-            <Header />
+            <Navbar />
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto pt-28 mb-14">
                 <div className="w-full bg-white rounded-lg shadow-2xl md:mt-0 sm:max-w-md xl:p-0">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

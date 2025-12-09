@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 //import { loginValidationSchema } from "../../../validators/loginValidation";
-import Header from "../molecules/HeaderLogin";
+import Navbar from "./Navbar";
 
 const LoginTemplate: React.FC<{
   onLogin: (email: string, password: string) => void;
@@ -23,7 +23,7 @@ const LoginTemplate: React.FC<{
 
   return (
     <>
-      <Header />
+      <Navbar />
       <section
         className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
         style={{
