@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 // import { registerValidationSchema } from "../../../../app/validators/registerValidation";
-import Header from "../molecules/HeaderLogin";
+import Navbar from "./Navbar";
 
 const RegisterTemplate: React.FC<{
   onRegister: (
@@ -32,7 +32,7 @@ const RegisterTemplate: React.FC<{
 
   return (
     <>
-      <Header />
+      <Navbar />
       <section
         className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
         style={{

@@ -1,8 +1,8 @@
-import  Header  from "../molecules/HeaderLogin";
 import { AdminCard } from "../molecules/AdminCard";
 import  Button  from "../atoms/button";
 import { Plus } from "lucide-react";
 import SideBar from "../molecules/SideBar";
+import Navbar from "./Navbar";
 
 interface Admin {
   id: number;
@@ -24,7 +24,7 @@ export const AdminPageTemplate = ({
 }: AdminPageTemplateProps) => {
   return (
     <>
-      <Header />
+      <Navbar />
       <SideBar />
       <main className="min-h-screen min-h-[100svh] flex flex-col bg-gray-50 pt-24 py-8 px-4 sm:px-6 lg:px-8 sm:ml-64">
         <div className="max-w-4xl w-full mx-auto">
