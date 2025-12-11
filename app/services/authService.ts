@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// const apiUrl = "https://projeto-mvc-restful-server.vercel.app/api/logins";
 const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/logins";
 
 interface LoginCredentials {
@@ -70,6 +69,26 @@ class AuthService {
       throw error;
     }
   }
+
+  async getUser(tokenFromArg?: string) {
+    try {
+      const token = tokenFromArg ?? localStorage.getItem("access_token");
+      if (!token) throw new Error("Token não encontrado");
+
+      const response = await axios.get(`${apiUrl}/usuarioLogado`,{
+          headers: {
+            "access-token": token,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao obter dados do usuário:", error);
+      throw error;
+    }
+  }
+
 }
+
 
 export default new AuthService();
