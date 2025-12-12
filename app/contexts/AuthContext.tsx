@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         console.warn("Falha no getUsuario com o token: ", error)
       }
 
-      router.push("/pages/dashboard");
+      router.push("/pages/admin");
     } catch (error) {
       console.error("Erro ao fazer login", error);
       throw error;
