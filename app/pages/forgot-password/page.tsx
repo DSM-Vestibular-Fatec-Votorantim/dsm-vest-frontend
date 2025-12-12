@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ForgotPasswordTemplate from "@/app/components/templates/ForgotPasswordTemplate";
+import ForgotPasswordTemplate from "@/app/components/templates/forgot-password/ForgotPasswordTemplate";
 //import AuthService from "@/app/services/authService";
 
 const ForgotPasswordPage: React.FC = () => {

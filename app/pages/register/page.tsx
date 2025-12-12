@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthService from "../../services/authService";
-import RegisterTemplate from "../../components/templates/RegisterTemplate";
+import RegisterTemplate from "../../components/templates/register/RegisterTemplate";
 
 const RegisterPage: React.FC = () => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);

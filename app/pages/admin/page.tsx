@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AdminPageTemplate } from "../../components/templates/AdminTemplate";
+import { AdminPageTemplate } from "../../components/templates/admin/AdminTemplate";
 
 export default function AdminPage() {
   const router = useRouter();

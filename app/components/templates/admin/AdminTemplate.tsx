@@ -1,8 +1,8 @@
-import { AdminCard } from "../molecules/AdminCard";
-import  Button  from "../atoms/button";
+import { AdminCard } from "../../molecules/AdminCard";
+import  Button  from "../../atoms/button";
 import { Plus } from "lucide-react";
-import SideBar from "../molecules/SideBar";
-import Navbar from "./Navbar";
+import SideBar from "../../molecules/SideBar";
+import Navbar from "../Navbar";
 
 interface Admin {
   id: number;

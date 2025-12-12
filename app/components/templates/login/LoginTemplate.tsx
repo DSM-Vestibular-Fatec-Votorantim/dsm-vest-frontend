@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 //import { loginValidationSchema } from "../../../validators/loginValidation";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 
 const LoginTemplate: React.FC<{
   onLogin: (email: string, password: string) => void;
