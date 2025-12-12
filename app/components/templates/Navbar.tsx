@@ -1,9 +1,11 @@
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import Logo from '../molecules/Logo';
 import HamburgerButton from '../atoms/HamburgerButton';
 import NavMenu from '../molecules/NavMenu';
 import MobileMenu from '../molecules/MobileMenu';
+import { usePathname } from "next/navigation";
 
 interface NavItem {
   href: string;
@@ -11,6 +13,7 @@ interface NavItem {
 }
 
 const Navbar = () => {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -35,8 +38,7 @@ const Navbar = () => {
     { href: '/contato', label: <>Fale<br />Conosco</> },
   ];
 
-  const isActive = (href: string) =>
-    typeof window !== 'undefined' && window.location.pathname === href;
+  const isActive = (href: string) => pathname === href;
 
   return (
     <header>
