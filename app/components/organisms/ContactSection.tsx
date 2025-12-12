@@ -3,7 +3,7 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from "lucide-react
 
 const ContactSection = () => {
   return (
-    <section className="bg-[#c4161c] py-10 flex justify-center">
+    <section id="Contatos" className="bg-[#c4161c] py-10 flex justify-center">
       <div className="bg-[#ececec] w-[90%] max-w-4xl p-6 rounded shadow">
         
         <h2 className="bg-[#f58c47] text-white font-semibold text-xl px-4 py-2 rounded">

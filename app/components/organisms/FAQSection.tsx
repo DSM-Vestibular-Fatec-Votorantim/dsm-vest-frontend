@@ -2,7 +2,7 @@ import React from "react";
 
 const FAQSection = () => {
   return (
-    <section className="w-full bg-white py-10 flex justify-center">
+    <section id="Duvidas" className="w-full bg-white py-10 flex justify-center">
       <div className="bg-[#ececec] w-[90%] max-w-5xl p-6 rounded shadow flex">
         
         {/* Lado esquerdo - categorias */}

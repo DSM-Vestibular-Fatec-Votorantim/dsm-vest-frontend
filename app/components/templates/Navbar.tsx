@@ -30,9 +30,9 @@ const Navbar = () => {
   const navItems: NavItem[] = [
     { href: '/', label: 'Home' },
     { href: '/relatos', label: 'Relatos' },
-    { href: '/calendario', label: 'Calendário' },
-    { href: '/duvidas', label: <>Dúvidas<br />Frequentes</> },
-    { href: '/contato', label: <>Fale<br />Conosco</> },
+    { href: '/#Calendario', label: 'Calendário' },
+    { href: '/#Duvidas', label: <>Dúvidas<br />Frequentes</> },
+    { href: '/#Contatos', label: <>Fale<br />Conosco</> },
   ];
 
   const isActive = (href: string) =>

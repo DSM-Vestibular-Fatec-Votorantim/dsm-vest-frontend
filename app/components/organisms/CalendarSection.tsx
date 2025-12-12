@@ -2,7 +2,7 @@ import React from "react";
 
 const CalendarSection = () => {
   return (
-    <section className="w-full bg-[#c4161c] py-10 flex justify-center">
+    <section id="Calendario" className="w-full bg-[#c4161c] py-10 flex justify-center">
       <div className="bg-[#ececec] w-[90%] max-w-4xl p-6 rounded shadow">
         <h2 className="text-white font-semibold text-xl bg-[#c4161c] px-4 py-2 rounded">
           Calendário
