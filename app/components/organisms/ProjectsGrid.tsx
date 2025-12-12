@@ -26,15 +26,15 @@ type Project = {
 const projects: Project[] = [
   {
     type: "image",
-    media: "https://res.cloudinary.com/<sua-cloud>/image/upload/v123/foto1.jpg",
-    thumbnail: "https://res.cloudinary.com/<sua-cloud>/image/upload/v123/foto1.jpg",
+    media: "https://res.cloudinary.com/dbygxcrbp/image/upload/v1765497787/imagens/jmsk5wevhiiwfquw6lge.jpg",
+    thumbnail: "https://res.cloudinary.com/dbygxcrbp/image/upload/v1765497787/imagens/jmsk5wevhiiwfquw6lge.jpg",
     turma: "Controle de Obras",
     link: "#",
   },
   {
     type: "video",
-    video: "",
-    thumbnail: "",
+    video: "https://res.cloudinary.com/dbygxcrbp/video/upload/v1765490553/videos/fnhbc4ffs2fnad9fndog.mp4",
+    thumbnail: generateThumbnailFromVideoUrl("https://res.cloudinary.com/dbygxcrbp/video/upload/v1765490553/videos/fnhbc4ffs2fnad9fndog.mp4"),
     turma: "DSM",
     link: "#",
   },
@@ -56,10 +56,16 @@ const projects: Project[] = [
 
 export default function ProjectsGrid() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="max-w-6xl w-full px-4 mt-10">
+      <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+        Projetos das Turmas
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
       {projects.map((proj, i) => (
         <ProjectCard key={i} data={proj} />
       ))}
     </div>
+    </div>
+    
   );
 }

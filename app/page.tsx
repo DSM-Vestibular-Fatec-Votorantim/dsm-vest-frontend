@@ -14,23 +14,8 @@ export default function HomePage() {
     <main className="w-full flex flex-col items-center">
       <Navbar />
       <Banner />
-
-      <section className="w-full flex flex-col items-center">
-        {/* Carousel */}
-        <div className="w-full">
-          <Carousel />
-        </div>
-
-        {/* Grid de projetos */}
-        <div className="max-w-6xl w-full px-4 mt-10">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-            Projetos das Turmas
-          </h2>
-          <ProjectsGrid />
-        </div>
-      </section>
-
-
+      <Carousel />
+      <ProjectsGrid />
       <CalendarSection />
       <FAQSection />
       <ContactSection />

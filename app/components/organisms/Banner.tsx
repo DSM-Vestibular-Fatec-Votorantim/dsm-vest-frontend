@@ -10,14 +10,23 @@ export default function Banner() {
         <h1 className="text-3xl md:text-4xl font-bold">
           Vestibular Fatec – Inscrições Abertas
         </h1>
-        <p className="mt-4 text-lg md:text-xl max-w-xl mx-auto">
-          Inicie sua jornada profissional estudando em uma das melhores
-          faculdades públicas do estado.
-        </p>
 
-        <button className="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 rounded-full font-semibold">
-          Saiba mais
-        </button>
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-4">
+          <a
+            className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-full font-semibold"
+            href="https://fatecvotorantim.cps.sp.gov.br/" target="_blank"
+          >
+            Saiba mais
+          </a>
+          
+          <a
+            className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-full font-semibold"
+            href="https://vestibular.fatec.sp.gov.br/home/" target="_blank"
+          >
+            Processo Seletivo
+          </a>
+        </div>
+
       </div>
     </div>
   );
