@@ -2,7 +2,7 @@ export default function Banner() {
   return (
     <div
       className="w-full h-[350px] bg-cover bg-center relative flex items-center justify-center"
-      style={{ backgroundImage: "url('/banner-img.png')" }}
+      style={{ backgroundImage: "url('https://res.cloudinary.com/dbygxcrbp/image/upload/v1765553829/imagens/dxthecct9anqqkdyjzkk.png')" }}
     >
       <div className="absolute inset-0 bg-black/40"></div>
 

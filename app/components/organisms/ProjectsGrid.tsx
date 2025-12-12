@@ -40,10 +40,10 @@ const projects: Project[] = [
   },
   {
     type: "image",
-    media: "https://res.cloudinary.com/<sua-cloud>/image/upload/v123/foto2.jpg",
-    thumbnail: "https://res.cloudinary.com/<sua-cloud>/image/upload/v123/foto2.jpg",
+    media: "https://res.cloudinary.com/dbygxcrbp/image/upload/v1765497787/imagens/jmsk5wevhiiwfquw6lge.jpg",
+    thumbnail: "https://res.cloudinary.com/dbygxcrbp/image/upload/v1765497787/imagens/jmsk5wevhiiwfquw6lge.jpg",
     turma: "DSM",
-    link: "#",
+    link: "https://front-end-wine-nu.vercel.app",
   },
   {
     type: "video",
