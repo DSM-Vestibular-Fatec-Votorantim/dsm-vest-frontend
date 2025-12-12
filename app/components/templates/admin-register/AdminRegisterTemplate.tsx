@@ -2,7 +2,7 @@
 
 //import { registerValidationSchema } from "@/app/validators/registerValidation";
 import { useFormik } from "formik";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 
 
 const AdminRegisterTemplate: React.FC<{

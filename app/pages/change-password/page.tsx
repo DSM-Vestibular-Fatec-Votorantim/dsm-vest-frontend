@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/navigation";
 //import AdminService from "@/app/services/adminService";
-import ChangePasswordTemplate from "@/app/components/templates/ChangePasswordTemplate";
+import ChangePasswordTemplate from "@/app/components/templates/change-password/ChangePasswordTemplate";
 
 const ChangePasswordPage: React.FC = () => {
   //const { isAuthenticated, loading } = useAuth();

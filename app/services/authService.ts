@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const apiUrl = "https://projeto-mvc-restful-server.vercel.app/api/logins";
-const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/logins";
+const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/login";
 
 interface LoginCredentials {
   email: string;
@@ -35,41 +34,61 @@ class AuthService {
     }
   }
 
-  async forgotPassword(email: string) {
-    try {
-      const response = await axios.post(`${apiUrl}/forgot`, {email});
+  // async forgotPassword(email: string) {
+  //   try {
+  //     const response = await axios.post(`${apiUrl}/forgot`, {email});
 
+  //     return response.data;
+  //   } catch (error) {
+  //     console.log(error);
+  //     //console.error("Erro ao enviar email de recuperação:", error);
+  //     //throw error;
+  //   }
+  // }
+
+  // async verifyCode(email: string, codigo: string) {
+  // try {
+  //   const response = await axios.post(`${apiUrl}/verify`, { email, codigo });
+  //   return response.data;
+  // } catch (error) {
+  //   console.error("Erro ao verificar código:", error);
+  //   throw error;
+  // }
+  // }
+
+  // async resetPassword(email: string, codigo: string, novaSenha: string) {
+  //   try {
+  //     const response = await axios.patch(`${apiUrl}/reset`, {
+  //       email,
+  //       codigo,
+  //       novaSenha,
+  //     });
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Erro ao redefinir senha:", error);
+  //     throw error;
+  //   }
+  // }
+
+  async getUser(tokenFromArg?: string) {
+    try {
+      const token = tokenFromArg ?? localStorage.getItem("access_token");
+      if (!token) throw new Error("Token não encontrado");
+
+      const response = await axios.get(`${apiUrl}/usuarioLogado`,{
+          headers: {
+            "access-token": token,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.log(error);
-      //console.error("Erro ao enviar email de recuperação:", error);
-      //throw error;
-    }
-  }
-
-  async verifyCode(email: string, codigo: string) {
-  try {
-    const response = await axios.post(`${apiUrl}/verify`, { email, codigo });
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao verificar código:", error);
-    throw error;
-  }
-  }
-
-  async resetPassword(email: string, codigo: string, novaSenha: string) {
-    try {
-      const response = await axios.patch(`${apiUrl}/reset`, {
-        email,
-        codigo,
-        novaSenha,
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao redefinir senha:", error);
+      console.error("Erro ao obter dados do usuário:", error);
       throw error;
     }
   }
+
 }
+
 
 export default new AuthService();

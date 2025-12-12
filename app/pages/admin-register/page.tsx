@@ -1,6 +1,6 @@
 "use client";
 
-import AdminRegisterTemplate from "@/app/components/templates/AdminRegisterTemplate";
+import AdminRegisterTemplate from "@/app/components/templates/admin-register/AdminRegisterTemplate";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

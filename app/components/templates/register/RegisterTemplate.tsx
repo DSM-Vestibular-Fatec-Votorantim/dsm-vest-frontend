@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 // import { registerValidationSchema } from "../../../../app/validators/registerValidation";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 
 const RegisterTemplate: React.FC<{
   onRegister: (
