@@ -1,8 +1,16 @@
+import { useSelectedImages } from "@/app/services/mediaService";
+
 export default function Banner() {
+  const selectedImageBanner = useSelectedImages([12]);
+
+  const bannerImage = selectedImageBanner[0]?.src;
+
   return (
     <div
       className="w-full h-[350px] bg-cover bg-center relative flex items-center justify-center"
-      style={{ backgroundImage: "url('https://res.cloudinary.com/dbygxcrbp/image/upload/v1765553829/imagens/dxthecct9anqqkdyjzkk.png')" }}
+      style={{ backgroundImage: `url('${bannerImage || 
+          "https://res.cloudinary.com/dbygxcrbp/image/upload/v1765553829/imagens/dxthecct9anqqkdyjzkk.png"
+        }')` }}
     >
       <div className="absolute inset-0 bg-black/40"></div>
 
