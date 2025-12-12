@@ -1,5 +1,6 @@
 "use client";
 
+import ProtectedRoute from "@/app/components/templates/protectedRoute";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -45,16 +46,18 @@ const ChangePasswordPage: React.FC = () => {
   };
 
   return (
-    <ChangePasswordTemplate
-      senhaAtual={senhaAtual}
-      novaSenha={novaSenha}
-      confirmaNovaSenha={confirmaNovaSenha}
-      onSenhaAtualChange={(e) => setSenhaAtual(e.target.value)}
-      onNovaSenhaChange={(e) => setNovaSenha(e.target.value)}
-      onConfirmaNovaSenhaChange={(e) => setConfirmaNovaSenha(e.target.value)}
-      onSubmit={handleSubmit}
-      mensagem={mensagem}
-    />
+    <ProtectedRoute>
+      <ChangePasswordTemplate
+        senhaAtual={senhaAtual}
+        novaSenha={novaSenha}
+        confirmaNovaSenha={confirmaNovaSenha}
+        onSenhaAtualChange={(e) => setSenhaAtual(e.target.value)}
+        onNovaSenhaChange={(e) => setNovaSenha(e.target.value)}
+        onConfirmaNovaSenhaChange={(e) => setConfirmaNovaSenha(e.target.value)}
+        onSubmit={handleSubmit}
+        mensagem={mensagem}
+      />
+    </ProtectedRoute>
   );
 };
 

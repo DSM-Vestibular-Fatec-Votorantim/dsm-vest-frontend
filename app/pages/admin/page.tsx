@@ -1,5 +1,6 @@
 "use client"; // caso esteja usando App Router
 
+import ProtectedRoute from "@/app/components/templates/protectedRoute";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminPageTemplate } from "../../components/templates/admin/AdminTemplate";
@@ -27,11 +28,13 @@ export default function AdminPage() {
   };
 
   return (
-    <AdminPageTemplate
-      admins={admins}
-      onAdd={handleAdd}
-      onDelete={handleDelete}
-      onChangePassword={handleChangePassword}
-    />
+    <ProtectedRoute>
+      <AdminPageTemplate
+        admins={admins}
+        onAdd={handleAdd}
+        onDelete={handleDelete}
+        onChangePassword={handleChangePassword}
+      />
+    </ProtectedRoute>
   );
 }
