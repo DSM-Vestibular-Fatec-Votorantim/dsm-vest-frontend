@@ -1,24 +1,16 @@
 "use client";
 
+import ProtectedRoute from "@/app/components/templates/protectedRoute";
 import AdminRegisterTemplate from "@/app/components/templates/admin-register/AdminRegisterTemplate";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AuthService from "@/app/services/authService";
-//import AdminService from "@/app/services/adminService";
+
 
 const AdminRegisterPage: React.FC = () => {
-  //const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-
-  /*useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("/");
-    }
-  }, [isAuthenticated, loading, router]);
-
-  if (loading) return null;*/
 
   const handleRegister = async (
     nome: string,
@@ -26,11 +18,6 @@ const AdminRegisterPage: React.FC = () => {
     senha: string,
     confirmarSenha: string
   ) => {
-    /*const token = localStorage.getItem("access_token");
-     if (!token) {
-      setErrorMessages(["Token inválido. Faça login novamente."]);
-      return;
-    }*/
     if (senha !== confirmarSenha) {
       setErrorMessages(["As senhas não coincidem. Por favor, verifique."]);
       return;
@@ -65,12 +52,12 @@ const AdminRegisterPage: React.FC = () => {
   };
 
   return (
-    /*isAuthenticated &&*/ (
+    <ProtectedRoute>
       <AdminRegisterTemplate
         onRegister={handleRegister}
         errorMessages={errorMessages}
       />
-    )
+    </ProtectedRoute>
   );
 };
 
