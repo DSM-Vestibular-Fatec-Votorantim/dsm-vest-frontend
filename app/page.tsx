@@ -8,6 +8,7 @@ import FAQSection from "./components/organisms/FAQSection";
 import ContactSection from "./components/organisms/ContactSection";
 import Carousel from "./components/organisms/ReceptionSection";
 import ProjectsGrid from "./components/organisms/ProjectsGrid";
+import StudentsSection from "./components/organisms/StudentsSection";
 
 export default function HomePage() {
   return (
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Navbar />
       <Banner />
       <Carousel />
+      <StudentsSection />
       <ProjectsGrid />
       <CalendarSection />
       <FAQSection />
