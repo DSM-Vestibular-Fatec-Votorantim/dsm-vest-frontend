@@ -24,7 +24,7 @@ const StudentsSection = () => {
   return (
     <section className="w-full md:max-w-6xl py-10 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-2xl md:text-4xl">Relatos de nossos alunos</h1>
+        <h1 className="text-cyan-700 text-2xl md:text-4xl">Relatos de nossos alunos</h1>
 
         <div className="relative mt-6">
             <button

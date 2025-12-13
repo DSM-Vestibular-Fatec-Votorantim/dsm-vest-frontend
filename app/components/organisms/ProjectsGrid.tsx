@@ -6,7 +6,7 @@ export default function ProjectsGrid() {
 
   return (
     <div className="max-w-6xl w-full px-4 my-5">
-      <h2 className="text-3xl font-semibold text-gray-900 mb-5">
+      <h2 className="text-3xl font-semibold text-cyan-700 mb-5">
         Projetos e postagens
       </h2>
 

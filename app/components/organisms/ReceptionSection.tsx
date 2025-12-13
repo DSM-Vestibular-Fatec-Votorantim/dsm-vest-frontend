@@ -46,10 +46,7 @@ export default function ReceptionSection() {
 
 
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-gradient-to-br from-[#A63524] to-[#AE0F0A] rounded-lg p-4 text-white shadow-lg">
-              <h4 className="text-sm font-bold mb-2 uppercase tracking-wide">O que dizem sobre nós</h4>
-              <div className="h-1 w-12 bg-[#FF8C42] mb-3"></div>
-            </div>
+            <h3 className="text-cyan-700 text-2xl font-bold">O que dizem sobre nós</h3>
             
             {comments.map((comment) => (
               <div
