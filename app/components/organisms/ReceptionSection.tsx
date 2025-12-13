@@ -1,23 +1,42 @@
 import { useSelectedImages } from "@/app/services/mediaService";
 import Carousel from "../molecules/Carousel";
-import PostCard from "../molecules/PostCard";
+// import PostCard from "../molecules/PostCard";
 import Image from "next/image";
-import { useCards } from "@/app/services/cardsService";
+// import { useCards } from "@/app/services/cardsService";
 import { usePartnerComments } from "@/app/services/commentsService";
+import { useEffect, useState } from "react";
+import { getCarouselImageIds } from "@/app/services/carouselService";
 
 export default function ReceptionSection() {
   // const { cards, loading: loadingCards } = useCards();
-  const images = useSelectedImages([10, 11, 13]);
   const { comments, loading: loadingComments } = usePartnerComments();
+  const [carouselIds, setCarouselIds] = useState<number[]>([]);
 
-  // if(loadingCards || loadingComments) return null;
+  useEffect(() => {
+    async function loadCarousel() {
+    const ids = await getCarouselImageIds();
+    setCarouselIds(ids);
+  }
 
-  if(loadingComments) return null;
+  loadCarousel();
+  }, []);
+
+  const images = useSelectedImages(carouselIds);
+
+  if (loadingComments) return null;
   
 
   return (
     <section className="w-full max-w-6xl mx-auto px-4">
-      <Carousel images={images} />
+      <Carousel
+        images={images}
+        onImageUpdated={async () => {
+          const ids = await getCarouselImageIds();
+          setCarouselIds(ids);
+        }}
+      />
+
+      
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cards de vídeos e postagens */}
