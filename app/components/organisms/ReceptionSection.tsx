@@ -6,12 +6,13 @@ import { useCards } from "@/app/services/cardsService";
 import { usePartnerComments } from "@/app/services/commentsService";
 
 export default function ReceptionSection() {
-  const { cards, loading: loadingCards } = useCards();
+  // const { cards, loading: loadingCards } = useCards();
   const images = useSelectedImages([10, 11, 13]);
   const { comments, loading: loadingComments } = usePartnerComments();
 
-  if(loadingCards || loadingComments) return null;
+  // if(loadingCards || loadingComments) return null;
 
+  if(loadingComments) return null;
   
 
   return (
@@ -19,7 +20,8 @@ export default function ReceptionSection() {
       <Carousel images={images} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div
+          {/* Cards de vídeos e postagens */}
+          {/* <div
             className="
               lg:col-span-2
               grid
@@ -42,7 +44,7 @@ export default function ReceptionSection() {
                 <PostCard post={post} />
               </div>
             ))}
-          </div>
+          </div> */}
 
 
           <div className="lg:col-span-1 space-y-4">
