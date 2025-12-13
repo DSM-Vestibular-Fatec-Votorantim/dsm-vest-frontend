@@ -23,8 +23,8 @@ const RegisterPage: React.FC = () => {
     try {
       await AuthService.register({ nome, email, senha });
 
-      alert("Cadastro realizado com sucesso!");
-      router.push("/");
+      alert("Administrador cadastrado com sucesso!");
+      router.push("admin");
     } catch (error: any) {
       if (
         error.response &&

@@ -4,7 +4,7 @@ import ProtectedRoute from "@/app/components/templates/protectedRoute";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/navigation";
-//import AdminService from "@/app/services/adminService";
+import AuthService from "../../services/authService";
 import ChangePasswordTemplate from "@/app/components/templates/change-password/ChangePasswordTemplate";
 
 const ChangePasswordPage: React.FC = () => {
@@ -33,15 +33,20 @@ const ChangePasswordPage: React.FC = () => {
     }
 
     try {
-      /*const data = await AdminService.changePassword(
+      const data = await AuthService.changePassword(
         senhaAtual,
         novaSenha,
         confirmaNovaSenha
-      );*/
-      console.log(`senhaAtual: ${senhaAtual} senha nova: ${novaSenha} confirma nova senha: ${confirmaNovaSenha} `)
-      //setMensagem(data.message || "Senha alterada com sucesso!");
+      );
+
+      setMensagem(data.message);
+      setSenhaAtual("");
+      setNovaSenha("");
+      setConfirmaNovaSenha("");
     } catch (error: any) {
-      setMensagem(error.response?.data?.message || "Erro ao alterar senha.");
+      setMensagem(
+        error.response?.data?.message || "Erro ao alterar senha."
+      );
     }
   };
 

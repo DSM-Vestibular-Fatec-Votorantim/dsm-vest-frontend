@@ -14,6 +14,17 @@ interface RegisterCredentials {
   senha: string;
 }
 
+export interface Admin {
+  id: number;
+  name: string;
+  email: string;
+}
+
+function getToken(): string | null {
+  return localStorage.getItem("access_token");
+}
+
+
 class AuthService {
   async login(credentials: LoginCredentials) {
     try {
@@ -71,29 +82,71 @@ class AuthService {
   //   }
   // }
 
+  async getAdmins(): Promise<Admin[]> {
+    const token = localStorage.getItem("access_token");
+
+    const res = await axios.get(apiUrl, {
+      headers: {
+        "access-token": token,
+      },
+    });
+
+    return res.data.map((u: any) => ({
+      id: u.IdUsuario,
+      name: u.Nome,
+      email: u.Email,
+    }));
+  }
+
+  async changePassword(
+    senhaAtual: string,
+    novaSenha: string,
+    confirmaNovaSenha: string
+  ) {
+  const token = localStorage.getItem("access_token");
+
+  const response = await axios.patch(
+    `${apiUrl}/change`,
+    { senhaAtual, novaSenha, confirmaNovaSenha },
+    {
+      headers: {
+        "access-token": token, // 👈 PADRÃO DO SEU BACK
+      },
+    }
+  );
+
+  return response.data;
+}
+
+  async deleteAdmin(id: number): Promise<void> {
+    const token = localStorage.getItem("access_token");
+
+    await axios.delete(`${apiUrl}/${id}`, {
+      headers: {
+        "access-token": token,
+      },
+    });
+  }
+
   async getUser(token?: string): Promise<User> {
     const tokenToUse = token ?? localStorage.getItem("access_token");
     if (!tokenToUse) throw new Error("Token ausente");
 
-    const res = await fetch("http://localhost:4000/api/login/usuarioLogado", {
+    const res = await fetch(`${apiUrl}/usuarioLogado`, {
       headers: {
-        "access-token": tokenToUse, // antes era Authorization
+        "access-token": tokenToUse,
       },
     });
 
-    if (!res.ok) {
-      throw new Error("Erro ao buscar usuário");
-    }
+    if (!res.ok) throw new Error("Erro ao buscar usuário");
 
     const data = await res.json();
     return {
       Id: data.IdUsuario,
       Nome: data.Nome,
-      Email: data.Email
+      Email: data.Email,
     };
   }
-
 }
-
 
 export default new AuthService();

@@ -188,12 +188,12 @@ const RegisterTemplate: React.FC<{
                     </button>
 
                     <p className="text-center text-sm text-gray-600 mt-4">
-                      Já possui uma conta?{" "}
+                      Voltar para{" "}
                       <a
                         href="login"
                         className="font-medium text-blue-600 hover:underline"
                       >
-                        Fazer login
+                        Administradores
                       </a>
                     </p>
                   </form>
