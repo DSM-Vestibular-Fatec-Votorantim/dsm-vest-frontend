@@ -5,9 +5,10 @@ interface CardProps {
   name: string;
   description: string;
   imageUrl: string;
+  tipo?: string;
 }
 
-export default function CardAluno({ name, description, imageUrl }: CardProps) {
+export default function CardAluno({ name, description, imageUrl, tipo }: CardProps) {
     return (
     <div className="flex-shrink-0 w-80 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 p-6 border-t-4 border-[#A63524]">
       <div className="flex items-center mb-4">
@@ -25,6 +26,9 @@ export default function CardAluno({ name, description, imageUrl }: CardProps) {
         </div>
         <div className="ml-4">
           <h4 className="font-bold text-gray-900 text-lg">{name}</h4>
+          {tipo && (
+            <p className="text-gray-500 text-sm">{tipo}</p>
+          )}
         </div>
       </div>
       <p className="text-gray-700 leading-relaxed text-sm italic">

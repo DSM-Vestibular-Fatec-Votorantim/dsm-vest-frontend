@@ -10,8 +10,10 @@ export interface ComentariosIni {
     ImagemURL: string
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + '/comentariosIni'
+
 export async function getCards(): Promise<ComentariosIni[]> {
-    const res = await fetch("http://localhost:4000/api/comentariosIni")
+    const res = await fetch(apiUrl)
 
     if(!res.ok){
         console.error("Erro ao buscar relatos cadastrados");
@@ -33,5 +35,43 @@ export function useAllCards() {
   }, []);
 
   return { cards, loading };
+}
+
+export async function createStudentCard(formData: FormData) {
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao criar relato");
+  }
+}
+
+export async function updateStudentCard(
+  id: number,
+  formData: FormData
+) {
+  const res = await fetch(`${apiUrl}/${id}`, {
+    method: "PUT",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao atualizar relato");
+  }
+}
+
+export async function deleteStudentCard(id: number) {
+  const res = await fetch(`${apiUrl}/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao excluir relato");
+  }
 }
 
