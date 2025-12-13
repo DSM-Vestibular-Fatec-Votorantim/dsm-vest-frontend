@@ -4,11 +4,12 @@
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import authService from "../services/authService";
+import { User } from "../types/User";
 
 interface AuthContextProps {
   isAuthenticated: boolean;
   loading?: boolean;
-  user: unknown;
+  user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -26,7 +27,7 @@ export const useAuth = (): AuthContextProps => {
 
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<unknown>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -37,13 +38,19 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     if(token){
       (async () => {
         try {
-          const userData = await authService.getUser();
+          const userData = await authService.getUser(token);
           setUser(userData);
           setIsAuthenticated(true);
-        } catch (error) {
-          console.error("Erro ao buscar usuário logado:", error);
-          localStorage.removeItem("access_token");
-          setIsAuthenticated(false);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.error("Erro ao buscar usuário logado:", error.message);
+            if (error.message.includes("Token inválido")) {
+              localStorage.removeItem("access_token");
+              setIsAuthenticated(false);
+            }
+          } else {
+            console.error("Erro desconhecido ao buscar usuário logado:", error);
+          }
         } finally {
           setLoading(false);
         }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { User } from "../types/User";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/login";
 
@@ -70,22 +71,26 @@ class AuthService {
   //   }
   // }
 
-  async getUser(tokenFromArg?: string) {
-    try {
-      const token = tokenFromArg ?? localStorage.getItem("access_token");
-      if (!token) throw new Error("Token não encontrado");
+  async getUser(token?: string): Promise<User> {
+    const tokenToUse = token ?? localStorage.getItem("access_token");
+    if (!tokenToUse) throw new Error("Token ausente");
 
-      const response = await axios.get(`${apiUrl}/usuarioLogado`,{
-          headers: {
-            "access-token": token,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao obter dados do usuário:", error);
-      throw error;
+    const res = await fetch("http://localhost:4000/api/login/usuarioLogado", {
+      headers: {
+        "access-token": tokenToUse, // antes era Authorization
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao buscar usuário");
     }
+
+    const data = await res.json();
+    return {
+      Id: data.IdUsuario,
+      Nome: data.Nome,
+      Email: data.Email
+    };
   }
 
 }

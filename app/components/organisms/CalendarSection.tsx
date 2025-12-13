@@ -31,6 +31,20 @@ export default function CalendarSection() {
     load();
   }, []);
 
+  useEffect(() => {
+    const modalAberto = openCreateModal || openEditModal;
+
+    if (modalAberto) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [openCreateModal, openEditModal]);
+
   async function load() {
     setLoading(true);
     try {
@@ -125,7 +139,6 @@ export default function CalendarSection() {
             <p>Nenhum evento cadastrado</p>
           ) : (
             calendar.map((item) => (
-              // <-- importante: um único nó pai por item
               <div key={item.IdCalendario} className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm text-gray-600">
@@ -165,7 +178,7 @@ export default function CalendarSection() {
       {(openCreateModal || openEditModal) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-lg font-semibold mb-4 text-red-700">
               {openCreateModal ? "Adicionar Evento" : "Editar Evento"}
             </h3>
 

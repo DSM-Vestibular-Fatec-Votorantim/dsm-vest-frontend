@@ -1,21 +1,109 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDuvidas, Duvida } from "../../services/FAQService";
+import { 
+  getDuvidas,
+  createDuvida,
+  updateDuvida,
+  deleteDuvida,
+  Duvida
+} from "../../services/FAQService";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function FAQSection() {
   const [duvidas, setDuvidas] = useState<Duvida[]>([]);
   const [secaoSelecionada, setSecaoSelecionada] = useState("Todas");
 
+  const { isAuthenticated, user } = useAuth();
+
+  const [editModal, setEditModal] = useState<Duvida | null>(null);
+  const [createModal, setCreateModal] = useState(false);
+  const [deleting, setDeleting] = useState<Duvida | null>(null);
+
+  const [editTitulo, setEditTitulo] = useState("");
+  const [editDescricao, setEditDescricao] = useState("");
+  const [editSecao, setEditSecao] = useState("");
+
+  const [newTitulo, setNewTitulo] = useState("");
+  const [newDescricao, setNewDescricao] = useState("");
+  const [newSecao, setNewSecao] = useState("Geral");
+
   useEffect(() => {
-    getDuvidas().then(setDuvidas);
+    fetchDuvidas();
   }, []);
+
+  useEffect(() => {
+    const modalAberto = createModal || editModal || deleting;
+
+    if (modalAberto) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [createModal, editModal, deleting]);
+
+  async function fetchDuvidas() {
+    const data = await getDuvidas();
+    setDuvidas(data);
+  }
+
+  function openEditModal(d: Duvida) {
+    setEditModal(d);
+    setEditTitulo(d.Titulo);
+    setEditDescricao(d.Descricao);
+    setEditSecao(d.Secao);
+  }
+
+  async function handleEditSave() {
+    if (!editModal || !user) return;
+
+    await updateDuvida(editModal.IdDuvidas, {
+      Secao: editSecao,
+      Titulo: editTitulo,
+      Descricao: editDescricao,
+      IdUsuario: user.Id
+    });
+
+    setEditModal(null);
+    fetchDuvidas();
+  }
+
+  async function handleDeleteConfirm() {
+    if (!deleting) return;
+    await deleteDuvida(deleting.IdDuvidas);
+    setDeleting(null);
+    fetchDuvidas();
+  }
+
+  async function handleCreate() {
+    if (!user) return;
+
+    await createDuvida({
+      Secao: newSecao,
+      Titulo: newTitulo,
+      Descricao: newDescricao,
+      IdUsuario: user.Id
+    });
+
+    setCreateModal(false);
+    setNewTitulo("");
+    setNewDescricao("");
+    setNewSecao("Geral");
+
+    fetchDuvidas();
+  }
+
 
   const secoes = ["Todas", "Geral", "Isenção e Redução", "Inscrição", "Prova", "Classificação"];
 
-  const filtradas = secaoSelecionada === "Todas"
-    ? duvidas
-    : duvidas.filter((d) => d.Secao === secaoSelecionada);
+  const filtradas =
+    secaoSelecionada === "Todas"
+      ? duvidas
+      : duvidas.filter((d) => d.Secao === secaoSelecionada);
 
   return (
     <section id="Duvidas" className="w-full bg-white py-10 flex justify-center">
@@ -42,25 +130,197 @@ export default function FAQSection() {
               </li>
             ))}
           </ul>
+
+          {isAuthenticated && (
+            <button
+              onClick={() => setCreateModal(true)}
+              className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm"
+            >
+              + Adicionar Pergunta
+            </button>
+          )}
         </div>
 
         {/* LADO DIREITO */}
-        <div className="w-2/3 pl-6">
+        <div className="w-2/3 pl-6 max-h-[55vh] overflow-y-auto">
           <h3 className="text-gray-800 font-semibold mb-4 text-lg">
             {secaoSelecionada.toUpperCase()}
           </h3>
 
           <div className="space-y-3">
             {filtradas.map((item) => (
-              <details key={item.IdDuvidas} className="bg-white p-3 rounded shadow cursor-pointer">
-                <summary className="font-semibold text-red-700">
+              <details
+                key={item.IdDuvidas}
+                className="bg-white p-3 rounded shadow relative"
+              >
+                <summary className="font-semibold text-red-700 cursor-pointer">
                   {item.Titulo}
                 </summary>
+
                 <p className="mt-2 text-sm text-gray-700">{item.Descricao}</p>
+
+                {/* BOTÕES (SOMENTE PARA LOGADOS) */}
+                {isAuthenticated && (
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={() => openEditModal(item)}
+                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs"
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      onClick={() => setDeleting(item)}
+                      className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                )}
               </details>
             ))}
           </div>
         </div>
+
+        {/* MODAL DE CRIAÇÃO */}
+        {createModal && (
+          <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40">
+            <div className="bg-white p-6 rounded shadow w-[400px]">
+              <h2 className="font-bold text-lg mb-4 text-red-700">Adicionar Pergunta</h2>
+
+              <label className="block text-sm font-semibold">Título</label>
+              <input
+                className="w-full p-2 border rounded mb-3"
+                value={newTitulo}
+                onChange={(e) => setNewTitulo(e.target.value)}
+              />
+
+              <label className="block text-sm font-semibold">Descrição</label>
+              <textarea
+                className="w-full p-2 border rounded mb-3"
+                rows={4}
+                value={newDescricao}
+                onChange={(e) => setNewDescricao(e.target.value)}
+              />
+
+              <label className="block text-sm font-semibold">Seção</label>
+              <select
+                className="w-full p-2 border rounded mb-4"
+                value={newSecao}
+                onChange={(e) => setNewSecao(e.target.value)}
+              >
+                <option>Geral</option>
+                <option>Isenção e Redução</option>
+                <option>Inscrição</option>
+                <option>Prova</option>
+                <option>Classificação</option>
+              </select>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => setCreateModal(false)}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="px-3 py-1 bg-blue-600 text-white rounded"
+                  onClick={handleCreate}
+                >
+                  Adicionar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/*  MODAL DE EDIÇÃO */}
+        {editModal && (
+          <div className="fixed inset-0 z-50 flex justify-center bg-black/40 items-center">
+            <div className="bg-white p-6 rounded shadow w-[400px]">
+
+              <h2 className="font-bold text-lg mb-4 text-red-700">Editar Dúvida</h2>
+
+              <label className="block text-sm font-semibold">Título</label>
+              <input
+                className="w-full p-2 border rounded mb-3"
+                value={editTitulo}
+                onChange={(e) => setEditTitulo(e.target.value)}
+              />
+
+              <label className="block text-sm font-semibold">Descrição</label>
+              <textarea
+                className="w-full p-2 border rounded mb-3"
+                rows={4}
+                value={editDescricao}
+                onChange={(e) => setEditDescricao(e.target.value)}
+              />
+
+              <label className="block text-sm font-semibold">Seção</label>
+              <select
+                className="w-full p-2 border rounded mb-4"
+                value={editSecao}
+                onChange={(e) => setEditSecao(e.target.value)}
+              >
+                <option>Geral</option>
+                <option>Isenção e Redução</option>
+                <option>Inscrição</option>
+                <option>Prova</option>
+                <option>Classificação</option>
+              </select>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  className="px-3 py-1 border rounded"
+                  onClick={() => setEditModal(null)}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="px-3 py-1 bg-blue-600 rounded text-white"
+                  onClick={handleEditSave}
+                >
+                  Salvar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL DE EXCLUSÃO */}
+        {deleting && (
+          <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
+            <div className="bg-white p-6 rounded shadow text-center w-[350px]">
+
+              <h2 className="font-bold text-lg mb-4 text-red-700">
+                Confirmar Exclusão
+              </h2>
+
+              <p className="mb-6">
+                Tem certeza que deseja excluir <strong>{deleting.Titulo}</strong>?
+              </p>
+
+              <div className="flex justify-center gap-3">
+                <button
+                  className="px-4 py-1 bg-gray-400 rounded text-white"
+                  onClick={() => setDeleting(null)}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  className="px-4 py-1 bg-red-600 rounded text-white"
+                  onClick={handleDeleteConfirm}
+                >
+                  Excluir
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
