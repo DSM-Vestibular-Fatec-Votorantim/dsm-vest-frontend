@@ -8,6 +8,14 @@ import { usePartnerComments } from "@/app/services/commentsService";
 import { useSelectedImages } from "@/app/services/mediaService";
 import { getCarouselImageIds } from "@/app/services/carouselService";
 
+import { useAuth } from "@/app/contexts/AuthContext";
+import CommentEditorModal from "../atoms/CommentEditorModal";
+import {
+  createComment,
+  updateComment,
+  deleteComment,
+} from "@/app/services/commentsService";
+
 
 type RawCarouselItem = {
   Posicao: number;
@@ -17,6 +25,9 @@ type RawCarouselItem = {
 export default function ReceptionSection() {
   const { comments, loading: loadingComments } = usePartnerComments();
   const [rawItems, setRawItems] = useState<RawCarouselItem[]>([]);
+  const { isAuthenticated } = useAuth();
+  const [editingComment, setEditingComment] = useState<any | null>(null);
+  const MAX_COMMENTS = 5;
 
   useEffect(() => {
     loadCarousel();
@@ -67,11 +78,42 @@ export default function ReceptionSection() {
             O que dizem sobre nós
           </h3>
 
+          {isAuthenticated && comments.length < MAX_COMMENTS && (
+          <button
+            onClick={() => setEditingComment({})}
+            className="bg-black/70 text-white px-3 py-1 rounded text-sm"
+          >
+            Adicionar comentário
+          </button>
+        )}
+
           {comments.map((comment) => (
             <div
               key={comment.id}
               className="bg-white rounded-lg p-4 shadow-md border-l-4 border-[#FF8C42]"
             >
+              {isAuthenticated && (
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => setEditingComment(comment)}
+                    className="text-xs bg-black/60 text-white px-2 py-1 rounded"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      if (confirm("Remover comentário?")) {
+                        await deleteComment(comment.id);
+                        window.location.reload();
+                      }
+                    }}
+                    className="text-xs bg-red-600 text-white px-2 py-1 rounded"
+                  >
+                    Excluir
+                  </button>
+                </div>
+              )}
               <div className="flex items-start gap-3 mb-2">
                 <Image
                   src={comment.image}
@@ -88,6 +130,29 @@ export default function ReceptionSection() {
             </div>
           ))}
         </div>
+
+        {editingComment && (
+          <CommentEditorModal
+            open
+            initialData={editingComment.id ? editingComment : undefined}
+            onClose={() => setEditingComment(null)}
+            onSubmit={async ({ name, comment, file }) => {
+              const formData = new FormData();
+              formData.append("Nome", name);
+              formData.append("Descricao", comment);
+              if (file) formData.append("file", file);
+
+              if (editingComment.id) {
+                await updateComment(editingComment.id, formData);
+              } else {
+                await createComment(formData);
+              }
+
+              setEditingComment(null);
+              window.location.reload();
+            }}
+          />
+        )}
 
         
       </div>
