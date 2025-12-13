@@ -1,18 +1,32 @@
+import { useAuth } from "@/app/contexts/AuthContext";
 import { useSelectedImages } from "@/app/services/mediaService";
+import ImageManagerModal from "../atoms/ImageManagerModal";
+import { useState } from "react";
 
 export default function Banner() {
-  const selectedImageBanner = useSelectedImages([12]);
+  const { isAuthenticated } = useAuth();
+  const [open, setOpen] = useState(false);
 
-  const bannerImage = selectedImageBanner[0]?.src;
+  const images = useSelectedImages([12]);
+  const bannerImage = images[0]?.src;
 
   return (
+    <>
     <div
       className="w-full h-[350px] bg-cover bg-center relative flex items-center justify-center"
-      style={{ backgroundImage: `url('${bannerImage || 
-          "https://res.cloudinary.com/dbygxcrbp/image/upload/v1765553829/imagens/dxthecct9anqqkdyjzkk.png"
-        }')` }}
+      style={{ backgroundImage: `url('${bannerImage}')` }}
     >
+      
       <div className="absolute inset-0 bg-black/40"></div>
+
+      {isAuthenticated && (
+          <button
+            onClick={() => setOpen(true)}
+            className="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded"
+          >
+            Editar imagem
+          </button>
+        )}
 
       <div className="relative z-10 text-center text-white px-4">
         <h1 className="text-3xl md:text-4xl font-bold">
@@ -37,5 +51,15 @@ export default function Banner() {
 
       </div>
     </div>
+    {open && (
+        <ImageManagerModal
+          onClose={() => setOpen(false)}
+          onSelect={(imageId) => {
+            console.log("Imagem selecionada:", imageId);
+            setOpen(false);
+          }}
+        />
+      )}
+    </>
   );
 }

@@ -14,8 +14,10 @@ export interface Videos {
     public_id: string
 }
 
-export async function getImagens(): Promise<Imagens[]> {
-    const res = await fetch("http://localhost:4000/api/imagens")
+const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/imagens";
+
+export async function getAllImages(): Promise<Imagens[]> {
+    const res = await fetch(apiUrl)
 
     if(!res.ok){
         console.error("Erro ao buscar imagens cadastradas");
@@ -25,13 +27,46 @@ export async function getImagens(): Promise<Imagens[]> {
     return res.json();
 }
 
+export async function deleteImage(id: number) {
+  const res = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Erro ao deletar imagem");
+}
+
+export async function uploadImage(file: File, descricao: string) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("Descricao", descricao);
+
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Erro ao enviar imagem");
+  return res.json();
+}
+
+export async function updateImage(id: number, file: File, descricao: string) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("Descricao", descricao);
+
+  const res = await fetch(`${apiUrl}/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Erro ao atualizar imagem");
+}
+
+
 export function useSelectedImages(targetIds: number[]) {
   const [images, setImages] = useState<{ src: string; alt: string }[]>([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("http://localhost:4000/api/imagens");
+        const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Erro ao buscar imagens");
 
         const data: Imagens[] = await res.json();
@@ -56,7 +91,7 @@ export function useSelectedImages(targetIds: number[]) {
 }
 
 export async function getVideos(): Promise<Videos[]> {
-    const res = await fetch("http://localhost:4000/api/videos")
+    const res = await fetch(apiUrl)
 
     if(!res.ok){
         console.error("Erro ao buscar vídeos cadastrados");
@@ -72,7 +107,7 @@ export function useSelectedVideos(targetIds: number[]) {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("http://localhost:4000/api/videos");
+        const res = await fetch(apiUrl);
         if (!res.ok) throw new Error("Erro ao buscar vídeos");
 
         const data: Videos[] = await res.json();
