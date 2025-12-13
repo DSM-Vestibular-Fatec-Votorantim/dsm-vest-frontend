@@ -31,3 +31,14 @@ export async function addCarouselImage(imageId: number) {
     throw new Error("Erro ao adicionar imagem ao carousel");
   }
 }
+
+export async function removeCarouselImage(position: number) {
+  const res = await fetch(
+    `${apiUrl}/carousel/${position}`,
+    { method: "DELETE" }
+  );
+
+  if (!res.ok) {
+    throw new Error("Erro ao remover imagem do carousel");
+  }
+}
