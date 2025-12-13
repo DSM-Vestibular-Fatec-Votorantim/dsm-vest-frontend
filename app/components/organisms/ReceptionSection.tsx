@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import Carousel from "../molecules/Carousel";
 import { usePartnerComments } from "@/app/services/commentsService";
 import { useSelectedImages } from "@/app/services/mediaService";
 import { getCarouselImageIds } from "@/app/services/carouselService";
+
 
 type RawCarouselItem = {
   Posicao: number;
@@ -14,7 +16,6 @@ type RawCarouselItem = {
 
 export default function ReceptionSection() {
   const { comments, loading: loadingComments } = usePartnerComments();
-
   const [rawItems, setRawItems] = useState<RawCarouselItem[]>([]);
 
   useEffect(() => {
@@ -42,7 +43,25 @@ export default function ReceptionSection() {
         onImageUpdated={loadCarousel}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
+      <Script
+        src="https://elfsightcdn.com/platform.js"
+        strategy="lazyOnload"
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
+
+        {/* Instagram Feed */}
+        <div className="w-full">
+          <h3 className="text-cyan-700 text-2xl font-bold mb-4">
+            Instagram
+          </h3>
+
+          <div
+            className="elfsight-app-2f01e036-eb46-4c1f-b325-240cd63a745d"
+            data-elfsight-app-lazy
+          />
+        </div>
+
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-cyan-700 text-2xl font-bold">
             O que dizem sobre nós
@@ -69,6 +88,8 @@ export default function ReceptionSection() {
             </div>
           ))}
         </div>
+
+        
       </div>
     </section>
   );
