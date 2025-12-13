@@ -1,66 +1,36 @@
 "use client";
 
 import ProtectedRoute from "@/app/components/templates/protectedRoute";
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import AuthService from "../../services/authService";
 import ChangePasswordTemplate from "@/app/components/templates/change-password/ChangePasswordTemplate";
 
 const ChangePasswordPage: React.FC = () => {
-  //const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
-
-  const [senhaAtual, setSenhaAtual] = useState("");
-  const [novaSenha, setNovaSenha] = useState("");
-  const [confirmaNovaSenha, setConfirmaNovaSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
 
-  /*useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("/");
-    }
-  }, [loading, isAuthenticated, router]);
-
-  if (loading) return null;*/
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (novaSenha !== confirmaNovaSenha) {
-      setMensagem("As senhas não coincidem.");
-      return;
-    }
-
+  const handleSubmit = async (values: {
+    senhaAtual: string;
+    novaSenha: string;
+    confirmaNovaSenha: string;
+  }) => {
     try {
       const data = await AuthService.changePassword(
-        senhaAtual,
-        novaSenha,
-        confirmaNovaSenha
+        values.senhaAtual,
+        values.novaSenha,
+        values.confirmaNovaSenha
       );
-
-      setMensagem(data.message);
-      setSenhaAtual("");
-      setNovaSenha("");
-      setConfirmaNovaSenha("");
+      setMensagem(data.message); // Mensagem de sucesso
     } catch (error: any) {
-      setMensagem(
-        error.response?.data?.message || "Erro ao alterar senha."
-      );
+      setMensagem(error.response?.data?.message || "Erro ao alterar senha.");
     }
   };
 
   return (
     <ProtectedRoute>
       <ChangePasswordTemplate
-        senhaAtual={senhaAtual}
-        novaSenha={novaSenha}
-        confirmaNovaSenha={confirmaNovaSenha}
-        onSenhaAtualChange={(e) => setSenhaAtual(e.target.value)}
-        onNovaSenhaChange={(e) => setNovaSenha(e.target.value)}
-        onConfirmaNovaSenhaChange={(e) => setConfirmaNovaSenha(e.target.value)}
         onSubmit={handleSubmit}
         mensagem={mensagem}
+        setMensagem={setMensagem}
       />
     </ProtectedRoute>
   );

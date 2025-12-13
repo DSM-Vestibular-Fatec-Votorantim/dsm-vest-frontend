@@ -46,8 +46,8 @@ export default function AdminPage() {
     }
   }
 
-  function handleChangePassword(id: number) {
-    router.push(`change-password?id=${id}`);
+  function handleChangePassword() {
+    router.push("change-password");
   }
 
   if (loading) {

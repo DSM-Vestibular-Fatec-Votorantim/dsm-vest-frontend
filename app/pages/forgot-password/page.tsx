@@ -1,40 +1,49 @@
 "use client";
+
 import React from "react";
 import ForgotPasswordTemplate from "@/app/components/templates/forgot-password/ForgotPasswordTemplate";
-//import AuthService from "@/app/services/authService";
+import AuthService from "@/app/services/authService";
 
 const ForgotPasswordPage: React.FC = () => {
   const [step, setStep] = React.useState(1);
   const [email, setEmail] = React.useState("");
-  const [codigo, setCodigo] = React.useState("");
-  const [novaSenha, setNovaSenha] = React.useState("");
   const [mensagem, setMensagem] = React.useState("");
   const [erro, setErro] = React.useState("");
 
-  const handleSendEmail = async () => {
+  // ======================
+  // STEP 1 - ENVIAR EMAIL
+  // ======================
+  const handleSendEmail = async (emailValue: string) => {
     try {
-      //const res = await AuthService.forgotPassword(email);
-      //setMensagem(res.message);
+      setErro("");
+      const res = await AuthService.forgotPassword(emailValue);
+
+      setEmail(emailValue); // mantém email para o step 2
+      setMensagem(res.message);
       setStep(2);
     } catch (error: any) {
-      setErro(error.response?.data?.message || "");
+      setErro(error.response?.data?.message || "Erro ao enviar email");
     }
   };
 
-  /*const handleVerifyCode = async () => {
+  // ======================
+  // STEP 2 - RESETAR SENHA
+  // ======================
+  const handleResetPassword = async (data: {
+    email: string;
+    codigo: string;
+    novaSenha: string;
+    confirmarSenha: string;
+  }) => {
     try {
-      const res = await AuthService.verifyCode(email, codigo);
-      setMensagem(res.message);
-      setStep(3);
-    } catch (error: any) {
-      setErro(error.response?.data?.message || "Erro ao verificar código");
-    }
-  };*/
+      setErro("");
+      const res = await AuthService.resetPassword(
+        data.email,
+        data.codigo,
+        data.novaSenha
+      );
 
-  const handleResetPassword = async () => {
-    try {
-      //const res = await AuthService.resetPassword(email, codigo, novaSenha);
-      //setMensagem(res.message);
+      setMensagem(res.message);
       setStep(3);
     } catch (error: any) {
       setErro(error.response?.data?.message || "Erro ao redefinir senha");
@@ -46,15 +55,9 @@ const ForgotPasswordPage: React.FC = () => {
       step={step}
       setStep={setStep}
       email={email}
-      setEmail={setEmail}
-      codigo={codigo}
-      setCodigo={setCodigo}
-      novaSenha={novaSenha}
-      setNovaSenha={setNovaSenha}
       mensagem={mensagem}
       erro={erro}
       handleSendEmail={handleSendEmail}
-      //handleVerifyCode={handleVerifyCode}
       handleResetPassword={handleResetPassword}
     />
   );

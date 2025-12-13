@@ -7,15 +7,18 @@ interface AdminCardProps {
   name: string;
   onChangePassword: () => void;
   onDelete: () => void;
+  isOwner: boolean;
 }
 
-export const AdminCard = ({ name, onChangePassword, onDelete }: AdminCardProps) => (
+export const AdminCard = ({ name, onChangePassword, onDelete, isOwner }: AdminCardProps) => (
   <Card>
     <Title>{name}</Title>
     <div className="flex gap-4">
-      <Button onClick={onChangePassword}>
-        <Edit size={16} /> Trocar Senha
-      </Button>
+      {isOwner && (
+        <Button onClick={onChangePassword}>
+          <Edit size={16} /> Trocar Senha
+        </Button>
+      )}
       <Button variant="red" onClick={onDelete}>
         <Trash2 size={16} /> Deletar Administrador
       </Button>
