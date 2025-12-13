@@ -50,7 +50,7 @@ export function useSelectedImages(targetIds: number[]) {
     }
 
     load();
-  }, [targetIds]);
+  }, [targetIds.join(",")]);
 
   return images;
 }

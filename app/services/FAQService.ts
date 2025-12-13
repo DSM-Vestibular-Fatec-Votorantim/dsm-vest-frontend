@@ -1,3 +1,5 @@
+const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL
+
 export interface Duvida {
   IdDuvidas: number;
   Secao: string;
@@ -6,7 +8,7 @@ export interface Duvida {
 }
 
 export async function getDuvidas(): Promise<Duvida[]> {
-  const res = await fetch("http://localhost:4000/api/duvidas");
+  const res = await fetch(apiUrl + "/duvidas");
   
   if (!res.ok) {
     console.error("Erro na API");

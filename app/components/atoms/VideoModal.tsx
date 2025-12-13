@@ -1,41 +1,37 @@
-"use client";
+import { useEffect, useRef } from "react";
+import { X } from "lucide-react";
 
-import { useRef } from "react";
-
-type Props = {
-  video: string;
+interface VideoModalProps {
+  src: string;
   onClose: () => void;
-};
+}
 
-export default function VideoModal({ video, onClose }: Props) {
-  const ref = useRef<HTMLVideoElement | null>(null);
+export default function VideoModal({ src, onClose }: VideoModalProps) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const togglePlay = () => {
-    if (!ref.current) return;
-    ref.current.paused ? ref.current.play() : ref.current.pause();
-  };
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-
-      {/* Botão fechar */}
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 text-white text-2xl"
+        className="absolute top-4 right-4 text-white"
       >
-        ✕
+        <X size={32} />
       </button>
 
-      {/* Container do vídeo — sem overflow-hidden */}
-      <div className="relative max-h-[90vh] flex items-center justify-center">
-        <video
-          ref={ref}
-          src={video}
-          className="max-h-[90vh] w-auto rounded-xl"
-          playsInline
-          controls
-        />
-      </div>
+      <video
+        ref={videoRef}
+        src={src}
+        controls
+        autoPlay
+        playsInline
+        className="max-w-[90vw] max-h-[90vh] object-contain"
+      />
     </div>
   );
 }

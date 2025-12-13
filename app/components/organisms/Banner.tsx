@@ -16,7 +16,7 @@ export default function Banner() {
 
       <div className="relative z-10 text-center text-white px-4">
         <h1 className="text-3xl md:text-4xl font-bold">
-          Vestibular Fatec – Inscrições Abertas
+          Vestibular Fatec Votorantim – Inscrições Abertas
         </h1>
 
         <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-4">
