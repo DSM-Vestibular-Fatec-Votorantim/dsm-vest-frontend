@@ -10,10 +10,12 @@ import {
   deleteEvent,
 } from "../../services/calendarService";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { calendarValidationSchema } from "../../validators/calendarValidation";
 
 export default function CalendarSection() {
   const [calendar, setCalendar] = useState<CalendarItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { isAuthenticated } = useAuth();
 
   // modais / form state
@@ -33,13 +35,7 @@ export default function CalendarSection() {
 
   useEffect(() => {
     const modalAberto = openCreateModal || openEditModal;
-
-    if (modalAberto) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
+    document.body.style.overflow = modalAberto ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -60,41 +56,63 @@ export default function CalendarSection() {
   function openCreate() {
     setForm({ DataInicio: "", DataFim: "", Descricao: "" });
     setEditingItem(null);
+    setErrors({});
     setOpenCreateModal(true);
   }
 
   function openEdit(item: CalendarItem) {
     setEditingItem(item);
-    // converte datas para yyyy-MM-dd (inputs date)
     const start = new Date(item.DataInicio).toISOString().slice(0, 10);
     const end = new Date(item.DataFim).toISOString().slice(0, 10);
     setForm({ DataInicio: start, DataFim: end, Descricao: item.Descricao });
+    setErrors({});
     setOpenEditModal(true);
   }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     try {
+      await calendarValidationSchema.validate(form, { abortEarly: false });
+      setErrors({});
       await createEvent(form);
       setOpenCreateModal(false);
       await load();
-    } catch (err) {
-      console.error("Erro ao criar evento:", err);
-      alert("Erro ao criar evento");
+    } catch (err: any) {
+      if (err.inner) {
+        const formErrors: { [key: string]: string } = {};
+        err.inner.forEach((error: any) => {
+          if (error.path) formErrors[error.path] = error.message;
+        });
+        setErrors(formErrors);
+      } else {
+        console.error("Erro ao criar evento:", err);
+        alert("Erro ao criar evento");
+      }
     }
   }
 
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     if (!editingItem) return;
+
     try {
+      await calendarValidationSchema.validate(form, { abortEarly: false });
+      setErrors({});
       await updateEvent(editingItem.IdCalendario, form);
       setOpenEditModal(false);
       setEditingItem(null);
       await load();
-    } catch (err) {
-      console.error("Erro ao atualizar evento:", err);
-      alert("Erro ao atualizar evento");
+    } catch (err: any) {
+      if (err.inner) {
+        const formErrors: { [key: string]: string } = {};
+        err.inner.forEach((error: any) => {
+          if (error.path) formErrors[error.path] = error.message;
+        });
+        setErrors(formErrors);
+      } else {
+        console.error("Erro ao atualizar evento:", err);
+        alert("Erro ao atualizar evento");
+      }
     }
   }
 
@@ -112,7 +130,6 @@ export default function CalendarSection() {
   return (
     <section id="Calendario" className="w-full bg-[#c4161c] py-10 flex justify-center">
       <div className="bg-[#ececec] w-[90%] max-w-4xl p-6 rounded shadow relative">
-        {/* botão de criar (aparece só para admin) */}
         {isAuthenticated && (
           <div className="flex justify-end mb-4">
             <button
@@ -142,16 +159,14 @@ export default function CalendarSection() {
               <div key={item.IdCalendario} className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm text-gray-600">
-                    {item.DataInicio === item.DataFim ? (
-                        <>📅 Em {formatDate(item.DataInicio)}</>
-                    ) : (
-                        <>📅 De {formatDate(item.DataInicio)} até {formatDate(item.DataFim)}</>
-                    )}
-                   </p>
+                    {item.DataInicio === item.DataFim
+                      ? <>📅 Em {formatDate(item.DataInicio)}</>
+                      : <>📅 De {formatDate(item.DataInicio)} até {formatDate(item.DataFim)}</>
+                    }
+                  </p>
                   <p className="font-semibold">{item.Descricao}</p>
                 </div>
 
-                {/* botões de ação (aparecem somente para admin) */}
                 {isAuthenticated && (
                   <div className="flex gap-2">
                     <button
@@ -174,7 +189,6 @@ export default function CalendarSection() {
         </div>
       </div>
 
-      {/* Modal criar */}
       {(openCreateModal || openEditModal) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
@@ -192,6 +206,7 @@ export default function CalendarSection() {
                   className="w-full border px-2 py-1 rounded"
                   required
                 />
+                {errors.DataInicio && <p className="text-red-600 text-sm">{errors.DataInicio}</p>}
               </div>
 
               <div>
@@ -203,6 +218,7 @@ export default function CalendarSection() {
                   className="w-full border px-2 py-1 rounded"
                   required
                 />
+                {errors.DataFim && <p className="text-red-600 text-sm">{errors.DataFim}</p>}
               </div>
 
               <div>
@@ -214,6 +230,7 @@ export default function CalendarSection() {
                   className="w-full border px-2 py-1 rounded"
                   required
                 />
+                {errors.Descricao && <p className="text-red-600 text-sm">{errors.Descricao}</p>}
               </div>
 
               <div className="flex justify-end gap-2">

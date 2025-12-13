@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as Yup from "yup";
 import {
   Mail,
   Phone,
@@ -15,6 +16,7 @@ import {
   FaleConosco,
 } from "../../services/talkToUsService";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { contactValidationSchema } from "../../validators/contactValidation";
 
 export default function ContactSection() {
   const [dados, setDados] = useState<FaleConosco[]>([]);
@@ -22,10 +24,8 @@ export default function ContactSection() {
 
   const { isAuthenticated } = useAuth();
 
-  // modal
   const [openEditModal, setOpenEditModal] = useState(false);
 
-  // form
   const [form, setForm] = useState({
     Tel: "",
     Email: "",
@@ -34,19 +34,14 @@ export default function ContactSection() {
     LinkLinkedin: "",
   });
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   useEffect(() => {
     load();
   }, []);
 
   useEffect(() => {
-    const modalAberto = openEditModal;
-
-    if (modalAberto) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
+    document.body.style.overflow = openEditModal ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -78,23 +73,39 @@ export default function ContactSection() {
     const info = dados[0];
     if (!info) return;
 
+    // "Trata" o telefone: remove espaços antes/depois
+    const telTratado = form.Tel.trim();
+
     const payload = {
-      Tel: form.Tel,
-      Email: form.Email,
-      End: info.End, // preserva
-      LinkFace: form.LinkFace,
-      LinkInsta: form.LinkInsta,
-      LinkLinkedin: form.LinkLinkedin,
-      Localizacao: info.Localizacao // preserva
+      Tel: telTratado,
+      Email: form.Email.trim(),
+      End: info.End,
+      LinkFace: form.LinkFace.trim(),
+      LinkInsta: form.LinkInsta.trim(),
+      LinkLinkedin: form.LinkLinkedin.trim(),
+      Localizacao: info.Localizacao
     };
 
     try {
+      // valida com Yup antes de enviar
+      await contactValidationSchema.validate(payload, { abortEarly: false });
+
       await updateFaleConosco(info.IdFaleConosco, payload);
       setOpenEditModal(false);
       await load();
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao atualizar dados");
+    } catch (err: unknown) {
+      if (err instanceof Yup.ValidationError) {
+        // Agora o TypeScript sabe que err tem .errors
+        setErrors(
+          err.inner.reduce((acc, curr) => {
+            if (curr.path) acc[curr.path] = curr.message;
+            return acc;
+          }, {} as { [key: string]: string })
+        );
+      } else {
+        console.error(err);
+        alert("Erro ao atualizar dados");
+      }
     }
   }
 
@@ -104,7 +115,6 @@ export default function ContactSection() {
     <section id="Contatos" className="bg-[#c4161c] py-10 flex justify-center">
       <div className="bg-[#ececec] w-[90%] max-w-4xl p-6 rounded shadow relative">
 
-        {/* BOTÃO EDITAR */}
         <h2 className="bg-[#f58c47] text-white font-semibold text-xl px-4 py-2 rounded">
           Fale Conosco
         </h2>
@@ -153,7 +163,7 @@ export default function ContactSection() {
             {isAuthenticated && info && (
               <div className="flex justify-end mt-6">
                 <button
-                  onClick={() => setOpenEditModal(true)}
+                  onClick={() => { setOpenEditModal(true); setErrors({}); }}
                   className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
                 >
                   Editar
@@ -168,9 +178,7 @@ export default function ContactSection() {
       {openEditModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold mb-4 text-red-700">
-              Editar Contatos
-            </h3>
+            <h3 className="text-lg font-semibold mb-4 text-red-700">Editar Contatos</h3>
 
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
@@ -181,6 +189,7 @@ export default function ContactSection() {
                   onChange={(e) => setForm({ ...form, Tel: e.target.value })}
                   placeholder="(00) 00000-0000"
                 />
+                {errors.Tel && <p className="text-red-600 text-sm">{errors.Tel}</p>}
               </div>
 
               <div>
@@ -192,6 +201,7 @@ export default function ContactSection() {
                   onChange={(e) => setForm({ ...form, Email: e.target.value })}
                   placeholder="contato@email.com"
                 />
+                {errors.Email && <p className="text-red-600 text-sm">{errors.Email}</p>}
               </div>
 
               <div>
@@ -202,6 +212,7 @@ export default function ContactSection() {
                   onChange={(e) => setForm({ ...form, LinkFace: e.target.value })}
                   placeholder="https://facebook.com/..."
                 />
+                {errors.LinkFace && <p className="text-red-600 text-sm">{errors.LinkFace}</p>}
               </div>
 
               <div>
@@ -212,6 +223,7 @@ export default function ContactSection() {
                   onChange={(e) => setForm({ ...form, LinkInsta: e.target.value })}
                   placeholder="https://instagram.com/..."
                 />
+                {errors.LinkInsta && <p className="text-red-600 text-sm">{errors.LinkInsta}</p>}
               </div>
 
               <div>
@@ -219,11 +231,10 @@ export default function ContactSection() {
                 <input
                   className="w-full border p-2 rounded"
                   value={form.LinkLinkedin}
-                  onChange={(e) =>
-                    setForm({ ...form, LinkLinkedin: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, LinkLinkedin: e.target.value })}
                   placeholder="https://linkedin.com/..."
                 />
+                {errors.LinkLinkedin && <p className="text-red-600 text-sm">{errors.LinkLinkedin}</p>}
               </div>
 
               <div className="flex justify-end gap-2 pt-2">

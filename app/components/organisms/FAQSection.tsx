@@ -9,6 +9,7 @@ import {
   Duvida
 } from "../../services/FAQService";
 import { useAuth } from "../../contexts/AuthContext";
+import { faqValidationSchema } from "../../validators/FAQValidation";
 
 export default function FAQSection() {
   const [duvidas, setDuvidas] = useState<Duvida[]>([]);
@@ -28,22 +29,16 @@ export default function FAQSection() {
   const [newDescricao, setNewDescricao] = useState("");
   const [newSecao, setNewSecao] = useState("Geral");
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   useEffect(() => {
     fetchDuvidas();
   }, []);
 
   useEffect(() => {
     const modalAberto = createModal || editModal || deleting;
-
-    if (modalAberto) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
+    document.body.style.overflow = modalAberto ? "hidden" : "auto";
+    return () => { document.body.style.overflow = "auto"; };
   }, [createModal, editModal, deleting]);
 
   async function fetchDuvidas() {
@@ -56,20 +51,77 @@ export default function FAQSection() {
     setEditTitulo(d.Titulo);
     setEditDescricao(d.Descricao);
     setEditSecao(d.Secao);
+    setErrors({});
   }
 
   async function handleEditSave() {
     if (!editModal || !user) return;
 
-    await updateDuvida(editModal.IdDuvidas, {
-      Secao: editSecao,
-      Titulo: editTitulo,
-      Descricao: editDescricao,
-      IdUsuario: user.Id
-    });
+    try {
+      // Validação
+      await faqValidationSchema.validate(
+        { Titulo: editTitulo, Descricao: editDescricao, Secao: editSecao },
+        { abortEarly: false }
+      );
+      setErrors({});
 
-    setEditModal(null);
-    fetchDuvidas();
+      await updateDuvida(editModal.IdDuvidas, {
+        Titulo: editTitulo,
+        Descricao: editDescricao,
+        Secao: editSecao,
+        IdUsuario: user.Id
+      });
+
+      setEditModal(null);
+      fetchDuvidas();
+    } catch (err: any) {
+      if (err.inner) {
+        const formErrors: { [key: string]: string } = {};
+        err.inner.forEach((error: any) => {
+          if (error.path) formErrors[error.path] = error.message;
+        });
+        setErrors(formErrors);
+      } else {
+        console.error(err);
+      }
+    }
+  }
+
+  async function handleCreate() {
+    if (!user) return;
+
+    try {
+      // Validação
+      await faqValidationSchema.validate(
+        { Titulo: newTitulo, Descricao: newDescricao, Secao: newSecao },
+        { abortEarly: false }
+      );
+      setErrors({});
+
+      await createDuvida({
+        Titulo: newTitulo,
+        Descricao: newDescricao,
+        Secao: newSecao,
+        IdUsuario: user.Id
+      });
+
+      setCreateModal(false);
+      setNewTitulo("");
+      setNewDescricao("");
+      setNewSecao("Geral");
+
+      fetchDuvidas();
+    } catch (err: any) {
+      if (err.inner) {
+        const formErrors: { [key: string]: string } = {};
+        err.inner.forEach((error: any) => {
+          if (error.path) formErrors[error.path] = error.message;
+        });
+        setErrors(formErrors);
+      } else {
+        console.error(err);
+      }
+    }
   }
 
   async function handleDeleteConfirm() {
@@ -79,31 +131,10 @@ export default function FAQSection() {
     fetchDuvidas();
   }
 
-  async function handleCreate() {
-    if (!user) return;
-
-    await createDuvida({
-      Secao: newSecao,
-      Titulo: newTitulo,
-      Descricao: newDescricao,
-      IdUsuario: user.Id
-    });
-
-    setCreateModal(false);
-    setNewTitulo("");
-    setNewDescricao("");
-    setNewSecao("Geral");
-
-    fetchDuvidas();
-  }
-
-
   const secoes = ["Todas", "Geral", "Isenção e Redução", "Inscrição", "Prova", "Classificação"];
-
-  const filtradas =
-    secaoSelecionada === "Todas"
-      ? duvidas
-      : duvidas.filter((d) => d.Secao === secaoSelecionada);
+  const filtradas = secaoSelecionada === "Todas"
+    ? duvidas
+    : duvidas.filter((d) => d.Secao === secaoSelecionada);
 
   return (
     <section id="Duvidas" className="w-full bg-white py-10 flex justify-center">
@@ -121,9 +152,7 @@ export default function FAQSection() {
                 key={item}
                 onClick={() => setSecaoSelecionada(item)}
                 className={`py-2 px-2 cursor-pointer ${
-                  secaoSelecionada === item
-                    ? "bg-[#c4161c] text-white"
-                    : "hover:bg-gray-200"
+                  secaoSelecionada === item ? "bg-[#c4161c] text-white" : "hover:bg-gray-200"
                 }`}
               >
                 {item}
@@ -159,7 +188,6 @@ export default function FAQSection() {
 
                 <p className="mt-2 text-sm text-gray-700">{item.Descricao}</p>
 
-                {/* BOTÕES (SOMENTE PARA LOGADOS) */}
                 {isAuthenticated && (
                   <div className="flex gap-2 mt-3">
                     <button
@@ -190,18 +218,20 @@ export default function FAQSection() {
 
               <label className="block text-sm font-semibold">Título</label>
               <input
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded mb-2"
                 value={newTitulo}
                 onChange={(e) => setNewTitulo(e.target.value)}
               />
+              {errors.Titulo && <p className="text-red-600 text-sm">{errors.Titulo}</p>}
 
               <label className="block text-sm font-semibold">Descrição</label>
               <textarea
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded mb-2"
                 rows={4}
                 value={newDescricao}
                 onChange={(e) => setNewDescricao(e.target.value)}
               />
+              {errors.Descricao && <p className="text-red-600 text-sm">{errors.Descricao}</p>}
 
               <label className="block text-sm font-semibold">Seção</label>
               <select
@@ -215,19 +245,13 @@ export default function FAQSection() {
                 <option>Prova</option>
                 <option>Classificação</option>
               </select>
+              {errors.Secao && <p className="text-red-600 text-sm">{errors.Secao}</p>}
 
               <div className="flex justify-end gap-2">
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => setCreateModal(false)}
-                >
+                <button className="px-3 py-1 border rounded" onClick={() => setCreateModal(false)}>
                   Cancelar
                 </button>
-
-                <button
-                  className="px-3 py-1 bg-blue-600 text-white rounded"
-                  onClick={handleCreate}
-                >
+                <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={handleCreate}>
                   Adicionar
                 </button>
               </div>
@@ -235,27 +259,28 @@ export default function FAQSection() {
           </div>
         )}
 
-        {/*  MODAL DE EDIÇÃO */}
+        {/* MODAL DE EDIÇÃO */}
         {editModal && (
-          <div className="fixed inset-0 z-50 flex justify-center bg-black/40 items-center">
+          <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40">
             <div className="bg-white p-6 rounded shadow w-[400px]">
-
               <h2 className="font-bold text-lg mb-4 text-red-700">Editar Dúvida</h2>
 
               <label className="block text-sm font-semibold">Título</label>
               <input
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded mb-2"
                 value={editTitulo}
                 onChange={(e) => setEditTitulo(e.target.value)}
               />
+              {errors.Titulo && <p className="text-red-600 text-sm">{errors.Titulo}</p>}
 
               <label className="block text-sm font-semibold">Descrição</label>
               <textarea
-                className="w-full p-2 border rounded mb-3"
+                className="w-full p-2 border rounded mb-2"
                 rows={4}
                 value={editDescricao}
                 onChange={(e) => setEditDescricao(e.target.value)}
               />
+              {errors.Descricao && <p className="text-red-600 text-sm">{errors.Descricao}</p>}
 
               <label className="block text-sm font-semibold">Seção</label>
               <select
@@ -269,19 +294,13 @@ export default function FAQSection() {
                 <option>Prova</option>
                 <option>Classificação</option>
               </select>
+              {errors.Secao && <p className="text-red-600 text-sm">{errors.Secao}</p>}
 
               <div className="flex justify-end gap-2">
-                <button
-                  className="px-3 py-1 border rounded"
-                  onClick={() => setEditModal(null)}
-                >
+                <button className="px-3 py-1 border rounded" onClick={() => setEditModal(null)}>
                   Cancelar
                 </button>
-
-                <button
-                  className="px-3 py-1 bg-blue-600 rounded text-white"
-                  onClick={handleEditSave}
-                >
+                <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={handleEditSave}>
                   Salvar
                 </button>
               </div>
@@ -293,31 +312,18 @@ export default function FAQSection() {
         {deleting && (
           <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
             <div className="bg-white p-6 rounded shadow text-center w-[350px]">
-
-              <h2 className="font-bold text-lg mb-4 text-red-700">
-                Confirmar Exclusão
-              </h2>
-
+              <h2 className="font-bold text-lg mb-4 text-red-700">Confirmar Exclusão</h2>
               <p className="mb-6">
                 Tem certeza que deseja excluir <strong>{deleting.Titulo}</strong>?
               </p>
-
               <div className="flex justify-center gap-3">
-                <button
-                  className="px-4 py-1 bg-gray-400 rounded text-white"
-                  onClick={() => setDeleting(null)}
-                >
+                <button className="px-4 py-1 bg-gray-400 rounded text-white" onClick={() => setDeleting(null)}>
                   Cancelar
                 </button>
-
-                <button
-                  className="px-4 py-1 bg-red-600 rounded text-white"
-                  onClick={handleDeleteConfirm}
-                >
+                <button className="px-4 py-1 bg-red-600 rounded text-white" onClick={handleDeleteConfirm}>
                   Excluir
                 </button>
               </div>
-
             </div>
           </div>
         )}
