@@ -7,12 +7,12 @@ export interface Imagens {
     public_id: string
 }
 
-export interface Videos {
-    IdVideos: number,
-    URL: string,
-    Descricao: string,
-    public_id: string
-}
+// export interface Videos {
+//     IdVideos: number,
+//     URL: string,
+//     Descricao: string,
+//     public_id: string
+// }
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/imagens";
 
@@ -90,43 +90,43 @@ export function useSelectedImages(targetIds: number[]) {
   return images;
 }
 
-export async function getVideos(): Promise<Videos[]> {
-    const res = await fetch(apiUrl)
+// export async function getVideos(): Promise<Videos[]> {
+//     const res = await fetch(apiUrl)
 
-    if(!res.ok){
-        console.error("Erro ao buscar vídeos cadastrados");
-        return [];
-    }
+//     if(!res.ok){
+//         console.error("Erro ao buscar vídeos cadastrados");
+//         return [];
+//     }
 
-    return res.json();
-}
+//     return res.json();
+// }
 
-export function useSelectedVideos(targetIds: number[]) {
-  const [videos, setVideos] = useState<{ src: string; alt: string }[]>([]);
+// export function useSelectedVideos(targetIds: number[]) {
+//   const [videos, setVideos] = useState<{ src: string; alt: string }[]>([]);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(apiUrl);
-        if (!res.ok) throw new Error("Erro ao buscar vídeos");
+//   useEffect(() => {
+//     async function load() {
+//       try {
+//         const res = await fetch(apiUrl);
+//         if (!res.ok) throw new Error("Erro ao buscar vídeos");
 
-        const data: Videos[] = await res.json();
+//         const data: Videos[] = await res.json();
 
-        const filtered = data
-          .filter((img) => targetIds.includes(img.IdVideos))
-          .map((img) => ({
-            src: img.URL,
-            alt: img.Descricao || `Vídeo ${img.IdVideos}`,
-          }));
+//         const filtered = data
+//           .filter((img) => targetIds.includes(img.IdVideos))
+//           .map((img) => ({
+//             src: img.URL,
+//             alt: img.Descricao || `Vídeo ${img.IdVideos}`,
+//           }));
 
-        setVideos(filtered);
-      } catch (err) {
-        console.error("Erro ao carregar vídeos:", err);
-      }
-    }
+//         setVideos(filtered);
+//       } catch (err) {
+//         console.error("Erro ao carregar vídeos:", err);
+//       }
+//     }
 
-    load();
-  }, [targetIds]);
+//     load();
+//   }, [targetIds]);
 
-  return videos;
-}
+//   return videos;
+// }
