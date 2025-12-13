@@ -1,70 +1,70 @@
 import { useEffect, useState } from "react";
 
-export interface Projetos {
-    IdProjeto: number,
-    Tipo: string,
-    LinkProj: string,
-    ImagemURL: string,
+export interface Projeto {
+  IdProjeto: number;
+  Tipo: string;      // turma do projeto
+  LinkProj: string;  // link externo
+  ImagemURL: string;
 }
 
-function detectMediaType(url: string): "image" | "video" {
-  return url.includes("/video/upload/") ? "video" : "image";
-}
+const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/projetos";
 
-function generateThumbnailFromVideoUrl(videoUrl: string): string {
-  if (!videoUrl.includes("/video/upload/")) {
-    console.warn("URL inválida ou não é um vídeo Cloudinary");
-    return "";
+export async function getProjetos(): Promise<Projeto[]> {
+  const res = await fetch(apiUrl);
+
+  if (!res.ok) {
+    console.error("Erro ao buscar projetos cadastrados");
+    return [];
   }
 
-  const [base, rest] = videoUrl.split("/video/upload/");
-
-  return `${base}/video/upload/c_fill,ar_16:9,q_auto,f_auto/${rest.replace(
-    /\.(mp4|mov|webm|mkv)$/i,
-    ".jpg"
-  )}`;
-}
-
-export async function getProjetos(): Promise<Projetos[]> {
-    const res = await fetch("http://localhost:4000/api/projetos")
-
-    if(!res.ok){
-        console.error("Erro ao buscar projetos e postagens cadastradas");
-        return [];
-    }
-
-    return res.json();
+  return res.json();
 }
 
 export function useAllProjects() {
-    const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Projeto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getProjetos().then((data) => {
-      const normalizados = data.map((proj) => {
-        const mediaType = detectMediaType(proj.ImagemURL);
-
-        return {
-          id: proj.IdProjeto,
-          type: mediaType,            
-          turma: proj.Tipo,           
-          link: proj.LinkProj,
-
-          media: mediaType === "image" ? proj.ImagemURL : null,
-          video: mediaType === "video" ? proj.ImagemURL : null,
-
-          thumbnail:
-            mediaType === "video"
-              ? generateThumbnailFromVideoUrl(proj.ImagemURL)
-              : proj.ImagemURL,
-        };
-      });
-
-      setProjects(normalizados);
+      setProjects(data);
       setLoading(false);
     });
   }, []);
 
   return { projects, loading };
+}
+
+export async function createProject(formData: FormData) {
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao criar projeto");
+  }
+}
+
+export async function updateProject(id: number, formData: FormData) {
+  const res = await fetch(`${apiUrl}/${id}`, {
+    method: "PUT",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao atualizar projeto");
+  }
+}
+
+export async function deleteProject(id: number) {
+  const res = await fetch(`${apiUrl}/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao excluir projeto");
+  }
 }
