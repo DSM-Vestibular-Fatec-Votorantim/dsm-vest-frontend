@@ -35,7 +35,7 @@ const Navbar = () => {
 
   const navItems: NavItem[] = [
     { href: '/', label: 'Home' },
-    { href: '/relatos', label: 'Relatos' },
+    { href: '/#Relatos', label: 'Relatos' },
     { href: '/#Calendario', label: 'Calendário' },
     { href: '/#Duvidas', label: <>Dúvidas<br />Frequentes</> },
     { href: '/#Contatos', label: <>Fale<br />Conosco</> },
