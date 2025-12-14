@@ -8,7 +8,6 @@ import MobileMenu from '../molecules/MobileMenu';
 import { usePathname } from "next/navigation";
 import { useAuth } from "../../contexts/AuthContext";
 
-
 interface NavItem {
   href: string;
   label: React.ReactNode;
@@ -18,6 +17,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const { isAuthenticated, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('/');
 
   useEffect(() => {
     const closeOnNavigate = () => setOpen(false);
@@ -32,6 +32,62 @@ const Navbar = () => {
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
   }, [open]);
+
+  // Detecta a seção ativa baseada no hash da URL e scroll
+  useEffect(() => {
+    const updateActiveSection = () => {
+      const hash = window.location.hash;
+      
+      if (hash) {
+        // Se tem hash na URL, usa ele
+        setActiveSection(`${pathname}${hash}`);
+      } else if (pathname === '/') {
+        // Se está na home sem hash, detecta qual seção está visível
+        const sections = ['Relatos', 'Calendario', 'Duvidas', 'Contatos'];
+        let currentSection = '/';
+        
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            // Se a seção está visível na viewport (considerando o navbar)
+            if (rect.top <= 150 && rect.bottom >= 150) {
+              currentSection = `/#${section}`;
+              break;
+            }
+          }
+        }
+        
+        setActiveSection(currentSection);
+      } else {
+        // Para outras páginas
+        setActiveSection(pathname);
+      }
+    };
+
+    // Atualiza imediatamente
+    updateActiveSection();
+
+    // Atualiza no scroll (apenas se estiver na home)
+    const handleScroll = () => {
+      if (pathname === '/' && !window.location.hash) {
+        updateActiveSection();
+      }
+    };
+
+    // Atualiza quando o hash muda
+    const handleHashChange = () => {
+      updateActiveSection();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [pathname]);
 
   const navItems: NavItem[] = [
     { href: '/', label: 'Home' },
@@ -51,7 +107,14 @@ const Navbar = () => {
       : []),
   ];
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => {
+    // Para home, verifica se está exatamente na home sem hash
+    if (href === '/') {
+      return activeSection === '/';
+    }
+    // Para outros links, verifica se corresponde à seção ativa
+    return activeSection === href;
+  };
 
   return (
     <header>
