@@ -17,7 +17,7 @@ export default function ProjectsGrid() {
   }, [initialProjects]);
 
   // Atualiza lista quando inicialProjects muda
-  useState(() => setProjects(initialProjects), [initialProjects]);
+  // useState(() => initialValue);
 
   const reloadProjects = async () => {
     const data = await fetch(process.env.NEXT_PUBLIC_API_BASEURL + "/projetos");
