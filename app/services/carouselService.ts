@@ -1,7 +1,19 @@
 const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/configuracao";
 
-export async function getCarouselImageIds(): Promise<number[]> {
-  const res = await fetch(`${apiUrl}/carousel`);
+export type RawCarouselItem = {
+  IdImagem: number;
+  Posicao: number;
+};
+
+export async function getCarouselImageIds(): Promise<RawCarouselItem[]> {
+  const res = await fetch(
+    apiUrl + "/carousel"
+  );
+
+  if (!res.ok) {
+    throw new Error("Erro ao buscar imagens do carousel");
+  }
+
   return res.json();
 }
 
