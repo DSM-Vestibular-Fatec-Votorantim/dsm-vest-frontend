@@ -42,7 +42,9 @@ export async function createProject(formData: FormData) {
   });
 
   if (!res.ok) {
-    throw new Error("Erro ao criar projeto");
+    const errorData = await res.json().catch(() => ({}));
+    const errorMsg = errorData.error || "Erro ao criar projeto";
+    throw new Error(errorMsg);
   }
 }
 
@@ -54,7 +56,9 @@ export async function updateProject(id: number, formData: FormData) {
   });
 
   if (!res.ok) {
-    throw new Error("Erro ao atualizar projeto");
+    const errorData = await res.json().catch(() => ({}));
+    const errorMsg = errorData.error || "Erro ao criar projeto";
+    throw new Error(errorMsg);
   }
 }
 
@@ -65,6 +69,7 @@ export async function deleteProject(id: number) {
   });
 
   if (!res.ok) {
-    throw new Error("Erro ao excluir projeto");
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erro ao excluir projeto");
   }
 }

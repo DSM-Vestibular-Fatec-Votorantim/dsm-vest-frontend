@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   open: boolean;
@@ -28,8 +28,29 @@ export default function StudentEditorModal({
     const [comment, setComment] = useState(initialData?.Descricao ?? "");
     const [tipo, setTipo] = useState(initialData?.Tipo ?? "DSM") //Tipo = Turma / padrão DSM
     const [file, setFile] = useState<File | undefined>();
+    const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     
+    useEffect(() => {
+        setName(initialData?.Nome ?? "");
+        setComment(initialData?.Descricao ?? "");
+        setTipo(initialData?.Tipo ?? "Obras");
+        setFile(undefined);
+        setError(null);
+        setSuccessMessage(null);
+    }, [initialData, open]);
+
     if (!open) return null;
+
+    const handleSubmit = async () => {
+        setSuccessMessage(null)
+        setError(null);
+        try {
+        await onSubmit({ Nome: name, Descricao: comment, Tipo: tipo, file });
+        } catch (err: any) {
+        setError(err.message || "Erro desconhecido");
+        }
+    };
     
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -67,6 +88,9 @@ export default function StudentEditorModal({
                     onChange={(e) => setFile(e.target.files?.[0])}
                 />
     
+                {error && <p className="text-red-600 text-sm">{error}</p>}
+                {successMessage && <p className="text-green-600 text-sm">{successMessage}</p>}
+
                 <div className="flex justify-end gap-2">
                 <button
                     onClick={onClose}
@@ -76,14 +100,7 @@ export default function StudentEditorModal({
                 </button>
         
                 <button
-                    onClick={() =>
-                        onSubmit({
-                            Nome: name,
-                            Descricao: comment,
-                            Tipo: tipo,
-                            file
-                        })
-                    }
+                    onClick={handleSubmit}
                     className="px-3 py-1 rounded bg-cyan-700 text-white"
                 >
                     Salvar

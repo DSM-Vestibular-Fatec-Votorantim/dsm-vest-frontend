@@ -45,7 +45,8 @@ export async function createStudentCard(formData: FormData) {
   });
 
   if (!res.ok) {
-    throw new Error("Erro ao criar relato");
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erro ao criar relato");
   }
 }
 
@@ -60,7 +61,8 @@ export async function updateStudentCard(
   });
 
   if (!res.ok) {
-    throw new Error("Erro ao atualizar relato");
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erro ao atualizar relato");
   }
 }
 
@@ -71,7 +73,8 @@ export async function deleteStudentCard(id: number) {
   });
 
   if (!res.ok) {
-    throw new Error("Erro ao excluir relato");
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erro ao excluir relato");
   }
 }
 
