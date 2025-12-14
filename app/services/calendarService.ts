@@ -8,9 +8,10 @@ export interface CalendarItem {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASEURL + "/calendario";
 
-export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("pt-BR");
+export function formatDate(dateString: string): string {
+  // Pega apenas a parte da data (YYYY-MM-DD) e formata diretamente
+  const [year, month, day] = dateString.split('T')[0].split('-');
+  return `${day}/${month}/${year}`;
 }
 
 export async function getCalendar(): Promise<CalendarItem[]> {

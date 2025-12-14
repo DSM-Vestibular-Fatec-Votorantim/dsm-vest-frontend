@@ -61,14 +61,14 @@ export default function CalendarSection() {
   }
 
   function openEdit(item: CalendarItem) {
-    setEditingItem(item);
-    const start = new Date(item.DataInicio).toISOString().slice(0, 10);
-    const end = new Date(item.DataFim).toISOString().slice(0, 10);
-    setForm({ DataInicio: start, DataFim: end, Descricao: item.Descricao });
-    setErrors({});
-    setOpenEditModal(true);
-  }
-
+  setEditingItem(item);
+  // Use split para pegar apenas a parte da data
+  const start = item.DataInicio.split('T')[0];
+  const end = item.DataFim.split('T')[0];
+  setForm({ DataInicio: start, DataFim: end, Descricao: item.Descricao });
+  setErrors({});
+  setOpenEditModal(true);
+}
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     try {
