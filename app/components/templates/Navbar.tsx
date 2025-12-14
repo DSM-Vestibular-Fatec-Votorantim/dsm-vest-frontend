@@ -33,59 +33,56 @@ const Navbar = () => {
     document.body.style.overflow = open ? 'hidden' : '';
   }, [open]);
 
-  // Detecta a seção ativa baseada no hash da URL e scroll
+  // Detecta a seção ativa baseada no scroll
   useEffect(() => {
     const updateActiveSection = () => {
-      const hash = window.location.hash;
+      // Se não estiver na home, usa o pathname
+      if (pathname !== '/') {
+        setActiveSection(pathname);
+        return;
+      }
+
+      // Se estiver na home, detecta qual seção está visível
+      const sections = ['Relatos', 'Projetos', 'Calendario', 'Duvidas', 'Contatos'];
+      const scrollPosition = window.scrollY + 200; // Offset para considerar o navbar
       
-      if (hash) {
-        // Se tem hash na URL, usa ele
-        setActiveSection(`${pathname}${hash}`);
-      } else if (pathname === '/') {
-        // Se está na home sem hash, detecta qual seção está visível
-        const sections = ['Relatos', 'Projetos', 'Calendario', 'Duvidas', 'Contatos'];
-        let currentSection = '/';
-        
-        for (const section of sections) {
-          const element = document.getElementById(section);
-          if (element) {
-            const rect = element.getBoundingClientRect();
-            // Se a seção está visível na viewport (considerando o navbar)
-            if (rect.top <= 150 && rect.bottom >= 150) {
-              currentSection = `/#${section}`;
-              break;
-            }
+      // Verifica se está no topo da página
+      if (window.scrollY < 100) {
+        setActiveSection('/');
+        return;
+      }
+
+      // Procura qual seção está visível
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const elementTop = rect.top + window.scrollY;
+          const elementBottom = elementTop + rect.height;
+          
+          // Se a posição do scroll está dentro desta seção
+          if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
+            setActiveSection(`/#${section}`);
+            return;
           }
         }
-        
-        setActiveSection(currentSection);
-      } else {
-        // Para outras páginas
-        setActiveSection(pathname);
       }
     };
 
     // Atualiza imediatamente
     updateActiveSection();
 
-    // Atualiza no scroll (apenas se estiver na home)
+    // Atualiza no scroll
     const handleScroll = () => {
-      if (pathname === '/' && !window.location.hash) {
+      if (pathname === '/') {
         updateActiveSection();
       }
     };
 
-    // Atualiza quando o hash muda
-    const handleHashChange = () => {
-      updateActiveSection();
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('hashchange', handleHashChange);
     };
   }, [pathname]);
 
@@ -125,7 +122,16 @@ const Navbar = () => {
       >
         <div className="max-w-[1400px] mx-auto px-5 py-10 flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3">
+          <a 
+            href="/" 
+            className="flex items-center gap-3"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              setActiveSection('/');
+              window.history.pushState({}, '', '/');
+            }}
+          >
             <Logo />
           </a>
 

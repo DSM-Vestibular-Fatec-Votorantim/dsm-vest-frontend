@@ -38,12 +38,39 @@ const NavLink: React.FC<NavLinkProps> = ({
 
   const className = variant === 'desktop' ? desktopStyles : mobileStyles;
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Se for link com hash (âncora)
+    if (href.includes('#') && href.startsWith('/')) {
+      e.preventDefault();
+      const hash = href.split('#')[1];
+      
+      if (hash) {
+        // Navega para a seção
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+          window.history.pushState({}, '', href);
+        }
+      }
+    } else if (href === '/') {
+      // Se for o home, apenas rola para o topo sem recarregar
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.history.pushState({}, '', '/');
+    }
+    
+    // Chama o onClick adicional se existir
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <a
       href={href}
       className={className}
       style={variant === 'desktop' ? { minHeight: '56px' } : undefined}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <span className={variant === 'desktop' ? 'block' : 'block text-left'}>
         {label}
