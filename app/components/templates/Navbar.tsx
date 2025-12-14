@@ -126,7 +126,16 @@ const Navbar = () => {
             href="/" 
             className="flex items-center gap-3"
             onClick={(e) => {
+              const currentPath = window.location.pathname;
               e.preventDefault();
+              
+              // Se não estiver na home, navega para lá
+              if (currentPath !== '/') {
+                window.location.href = '/';
+                return;
+              }
+              
+              // Se já estiver na home, apenas rola para o topo
               window.scrollTo({ top: 0, behavior: 'smooth' });
               setActiveSection('/');
               window.history.pushState({}, '', '/');
