@@ -43,7 +43,7 @@ const Navbar = () => {
         setActiveSection(`${pathname}${hash}`);
       } else if (pathname === '/') {
         // Se está na home sem hash, detecta qual seção está visível
-        const sections = ['Relatos', 'Calendario', 'Duvidas', 'Contatos'];
+        const sections = ['Relatos', 'Projetos', 'Calendario', 'Duvidas', 'Contatos'];
         let currentSection = '/';
         
         for (const section of sections) {
@@ -92,6 +92,7 @@ const Navbar = () => {
   const navItems: NavItem[] = [
     { href: '/', label: 'Home' },
     { href: '/#Relatos', label: 'Relatos' },
+    { href: '/#Projetos', label: 'Projetos' },
     { href: '/#Calendario', label: 'Calendário' },
     { href: '/#Duvidas', label: <>Dúvidas<br />Frequentes</> },
     { href: '/#Contatos', label: <>Fale<br />Conosco</> },

@@ -26,7 +26,7 @@ export default function ProjectsGrid() {
   };
 
   return (
-    <section className="w-full md:max-w-6xl py-10 bg-white">
+    <section id="Projetos" className="w-full md:max-w-6xl py-10 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-semibold text-cyan-700 mb-5">
