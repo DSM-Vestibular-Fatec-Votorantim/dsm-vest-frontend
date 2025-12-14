@@ -105,8 +105,8 @@ class AuthService {
       return response.data;
     } catch (error) {
       console.log(error);
-      //console.error("Erro ao enviar email de recuperação:", error);
-      //throw error;
+      console.error("Erro ao enviar email de recuperação:", error);
+      throw error;
     }
   }
 
