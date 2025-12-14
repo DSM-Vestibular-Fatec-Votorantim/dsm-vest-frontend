@@ -39,13 +39,28 @@ const NavLink: React.FC<NavLinkProps> = ({
   const className = variant === 'desktop' ? desktopStyles : mobileStyles;
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const currentPath = window.location.pathname;
+    
+    // Verifica se estamos fora da home (em qualquer outra página)
+    const isNotOnHome = currentPath !== '/';
+    
+    // Se não estamos na home, deixa o navegador fazer o redirecionamento normal
+    if (isNotOnHome) {
+      // Não previne o comportamento padrão, deixa o link funcionar normalmente
+      if (onClick) {
+        onClick();
+      }
+      return;
+    }
+    
+    // Se estamos na home, faz scroll suave
+    e.preventDefault();
+    
     // Se for link com hash (âncora)
     if (href.includes('#') && href.startsWith('/')) {
-      e.preventDefault();
       const hash = href.split('#')[1];
       
       if (hash) {
-        // Navega para a seção
         const element = document.getElementById(hash);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
@@ -53,8 +68,7 @@ const NavLink: React.FC<NavLinkProps> = ({
         }
       }
     } else if (href === '/') {
-      // Se for o home, apenas rola para o topo sem recarregar
-      e.preventDefault();
+      // Se for o home, rola para o topo
       window.scrollTo({ top: 0, behavior: 'smooth' });
       window.history.pushState({}, '', '/');
     }
