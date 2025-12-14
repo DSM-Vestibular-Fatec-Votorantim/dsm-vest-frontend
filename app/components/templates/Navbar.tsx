@@ -45,8 +45,8 @@ const Navbar = () => {
     ...navItems,
     ...(isAuthenticated
       ? [
-          { href: '/pages/admin', label: <a href="/pages/admin" className="bg-blue-600 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-700 text-center">Administradores</a> },
-          { href: '#logout', label: <button onClick={logout} className="bg-red-600 text-white px-4 py-2 text-sm rounded-md hover:bg-red-700">Logout</button> },
+          { href: '/pages/admin', label: 'Administradores' },
+          { href: '#logout', label: 'Logout', onClick: logout },
         ]
       : []),
   ];
@@ -67,7 +67,25 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-4">
-            <NavMenu items={menuItems} isActive={isActive} />
+            <NavMenu items={navItems} isActive={isActive} />
+
+            {/* Botões de autenticação */}
+            {isAuthenticated && (
+              <div className="flex items-center gap-2 ml-4">
+                <a
+                  href="/pages/admin"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                >
+                  Administradores
+                </a>
+                <button
+                  onClick={logout}
+                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Hamburger Button (mobile) */}
