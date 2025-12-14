@@ -1,8 +1,8 @@
-import { AdminCard } from "../molecules/AdminCard";
-import  Button  from "../atoms/button";
+import { AdminCard } from "../../molecules/AdminCard";
+import  Button  from "../../atoms/button";
 import { Plus } from "lucide-react";
-import SideBar from "../molecules/SideBar";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 interface Admin {
   id: number;
@@ -13,7 +13,7 @@ interface AdminPageTemplateProps {
   admins: Admin[];
   onAdd: () => void;
   onDelete: (id: number) => void;
-  onChangePassword: (id: number) => void;
+  onChangePassword: () => void;
 }
 
 export const AdminPageTemplate = ({
@@ -22,11 +22,12 @@ export const AdminPageTemplate = ({
   onDelete,
   onChangePassword,
 }: AdminPageTemplateProps) => {
+  const { user } = useAuth();
+
   return (
     <>
       <Navbar />
-      <SideBar />
-      <main className="min-h-screen min-h-[100svh] flex flex-col bg-gray-50 pt-24 py-8 px-4 sm:px-6 lg:px-8 sm:ml-64">
+      <main className="min-h-screen flex flex-col bg-gray-50 pt-26 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl w-full mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900">Administradores</h1>
@@ -46,8 +47,9 @@ export const AdminPageTemplate = ({
                 <AdminCard
                   key={admin.id}
                   name={admin.name}
-                  onChangePassword={() => onChangePassword(admin.id)}
+                  onChangePassword={onChangePassword}
                   onDelete={() => onDelete(admin.id)}
+                  isOwner={user?.Id === admin.id}
                 />
               ))
             )}

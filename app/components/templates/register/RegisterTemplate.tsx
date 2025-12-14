@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
-// import { registerValidationSchema } from "../../../../app/validators/registerValidation";
-import Navbar from "./Navbar";
+import { registerValidationSchema } from "../../../../app/validators/registerValidation";
+import Navbar from "../Navbar";
 
 const RegisterTemplate: React.FC<{
   onRegister: (
@@ -14,18 +14,18 @@ const RegisterTemplate: React.FC<{
 }> = ({ onRegister, errorMessages }) => {
   const formik = useFormik({
     initialValues: {
-      name: "",
+      nome: "",
       email: "",
-      password: "",
-      confirmPassword: "",
+      senha: "",
+      confirmarSenha: "",
     },
-    // validationSchema: registerValidationSchema,
+    validationSchema: registerValidationSchema,
     onSubmit: (values) => {
       onRegister(
-        values.name,
+        values.nome,
         values.email,
-        values.password,
-        values.confirmPassword
+        values.senha,
+        values.confirmarSenha
       );
     },
   });
@@ -44,7 +44,7 @@ const RegisterTemplate: React.FC<{
           <div className="bg-white rounded-lg shadow-2xl md:mt-0 w-[90%] max-w-[450px] xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-lg font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                Crie sua conta
+                Adicione um Administardor
               </h1>
 
               <div className="flex flex-col">
@@ -70,22 +70,22 @@ const RegisterTemplate: React.FC<{
                       </label>
                       <input
                         type="text"
-                        name="name"
+                        name="nome"
                         id="name"
-                        data-testid="name"
+                        data-testid="nome"
                         placeholder="Nome completo"
-                        value={formik.values.name}
+                        value={formik.values.nome}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                          formik.errors.name && formik.touched.name
+                          formik.errors.nome && formik.touched.nome
                             ? "border-red-500"
                             : ""
                         }`}
                       />
-                      {formik.touched.name && formik.errors.name && (
+                      {formik.touched.nome && formik.errors.nome && (
                         <p className="mt-1 text-sm text-red-600">
-                          {formik.errors.name}
+                          {formik.errors.nome}
                         </p>
                       )}
                     </div>
@@ -128,22 +128,22 @@ const RegisterTemplate: React.FC<{
                       </label>
                       <input
                         type="password"
-                        name="password"
-                        id="password"
+                        name="senha"
+                        id="senha"
                         data-testid="password"
                         placeholder="••••••••"
-                        value={formik.values.password}
+                        value={formik.values.senha}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                          formik.errors.password && formik.touched.password
+                          formik.errors.senha && formik.touched.senha
                             ? "border-red-500"
                             : ""
                         }`}
                       />
-                      {formik.touched.password && formik.errors.password && (
+                      {formik.touched.senha && formik.errors.senha && (
                         <p className="mt-1 text-sm text-red-600">
-                          {formik.errors.password}
+                          {formik.errors.senha}
                         </p>
                       )}
                     </div>
@@ -157,24 +157,24 @@ const RegisterTemplate: React.FC<{
                       </label>
                       <input
                         type="password"
-                        name="confirmPassword"
-                        id="confirmPassword"
+                        name="confirmarSenha"
+                        id="confirmarSenha"
                         data-testid="confirmPassword"
                         placeholder="••••••••"
-                        value={formik.values.confirmPassword}
+                        value={formik.values.confirmarSenha}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 ${
-                          formik.errors.confirmPassword &&
-                          formik.touched.confirmPassword
+                          formik.errors.confirmarSenha &&
+                          formik.touched.confirmarSenha
                             ? "border-red-500"
                             : ""
                         }`}
                       />
-                      {formik.touched.confirmPassword &&
-                        formik.errors.confirmPassword && (
+                      {formik.touched.confirmarSenha &&
+                        formik.errors.confirmarSenha && (
                           <p className="mt-1 text-sm text-red-600">
-                            {formik.errors.confirmPassword}
+                            {formik.errors.confirmarSenha}
                           </p>
                         )}
                     </div>
@@ -188,12 +188,12 @@ const RegisterTemplate: React.FC<{
                     </button>
 
                     <p className="text-center text-sm text-gray-600 mt-4">
-                      Já possui uma conta?{" "}
+                      Voltar para{" "}
                       <a
                         href="login"
                         className="font-medium text-blue-600 hover:underline"
                       >
-                        Fazer login
+                        Administradores
                       </a>
                     </p>
                   </form>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 //import { loginValidationSchema } from "../../../validators/loginValidation";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 
 const LoginTemplate: React.FC<{
   onLogin: (email: string, password: string) => void;
@@ -115,12 +115,12 @@ const LoginTemplate: React.FC<{
                       Fazer login
                     </button>
                     <p className="text-center text-sm text-gray-600 mt-4">
-                      Não possui conta?{" "}
+                      Entrou por engano? {" "}
                       <a
-                        href="register"
+                        href="/"
                         className="font-medium text-blue-600 hover:text-blue-500"
                       >
-                        Cadastre-se
+                        Voltar para a homepage
                       </a>
                     </p>
                   </form>
